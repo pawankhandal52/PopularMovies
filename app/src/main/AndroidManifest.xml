@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.udacity.androidnanodegree.popularmovies">
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+
+        <!-- This activity will show all the popular movies in grid -->
+        <activity android:name=".activity.HomeActivity">
+        </activity>
+        <!-- This the splash screen -->
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/Splash">
+            <intent-filter>
+                <category android:name="android.intent.category.LAUNCHER"/>
+
+                <action android:name="android.intent.action.MAIN"/>
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.MovieDetailsActivity"
+            android:label="@string/title_activity_movie_details"
+            android:parentActivityName=".activity.HomeActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.udacity.androidnanodegree.popularmovies.activity.HomeActivity"/>
+        </activity>
+    </application>
+
+</manifest>

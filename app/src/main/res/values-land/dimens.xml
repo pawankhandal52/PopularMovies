@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="detail_cardview_width">150dp</dimen>
+    <dimen name="app_bar_height">200dp</dimen>
+    <dimen name="text_margin">14dp</dimen>
+    <dimen name="error_text_size">16sp</dimen>
+    <dimen name="toolbar_elevation">4dp</dimen>
+    <dimen name="splash_icon">150dp</dimen>
+    <dimen name="text_large">20sp</dimen>
+    <dimen name="content_padding">16dp</dimen>
+    <dimen name="text_medium">18sp</dimen>
+    <dimen name="card_corner_radius">5dp</dimen>
+    <dimen name="card_elevation">10dp</dimen>
+    <dimen name="detail_cardview_height">200dp</dimen>
+    <dimen name="iv_margin_top">8dp</dimen>
+    <dimen name="poster_height">200dp</dimen>
+    <dimen name="card_margin_image">5dp</dimen>
+    <dimen name="margin_placeholder_card">20dp</dimen>
+    <dimen name="app_name_margin">115dp</dimen>
+
+</resources>

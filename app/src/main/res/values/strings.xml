@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Popular Movies</string>
+    <string name="splash_icon_desc">Popular Movies icon</string>
+    <string name="refresh">Refresh</string>
+    <string name="most_popular">Most Popular</string>
+    <string name="movie_image">Movie Image</string>
+    <string name="title_activity_movie_details">Movie Details</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="movie_detail_poster">Movie Detail Poster</string>
+    <string name="movie_banner_image">Movie Banner Image</string>
+    <string name="movie_release_date">Movie Release date</string>
+    <string name="synopsis">Synopsis</string>
+
+
+    <!--Keys used-->
+    <string name="page_key" translatable="false">page</string>
+    <string name="result_key" translatable="false">result data</string>
+    <string name="poster_image_transition" translatable="false">poster_image</string>
+    <string name="popularity">Popularity Desc</string>
+    <string name="rating_star">Rating star</string>
+    <string name="result_null_message">Unable to show Try Again!!</string>
+    <string name="seems_you_lose_the_internet_connection">Seems you lose the Internet Connection.</string>
+    <string name="swipe_to_refresh">Swipe To Refresh</string>
+    <string name="error_401">Invalid API key: You must be granted a valid key.</string>
+    <string name="error_404">The resource you requested could not be found.</string>
+    <string name="unknown_error">Unknown Error Try Again!!</string>
+    <string name="popular_movies">Popular Movies</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="something_went_wrong">Something Went Wrong Try Again!!</string>
+    <string name="look_before_you_watch">Look before you watch</string>
+
+</resources>
