@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="EntryPointsManager">
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setResults" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setTotalPages" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setTotalResults" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="getTotalResults" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setPage" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="getPage" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.models.Result" method="setVoteCount" />
+  </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
     <option name="myDefaultNotNull" value="android.support.annotation.NonNull" />

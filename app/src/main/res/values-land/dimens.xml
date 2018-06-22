@@ -17,5 +17,6 @@
     <dimen name="card_margin_image">5dp</dimen>
     <dimen name="margin_placeholder_card">20dp</dimen>
     <dimen name="app_name_margin">115dp</dimen>
+    <dimen name="srl_margin_top">30dp</dimen>
 
 </resources>

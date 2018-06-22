@@ -74,7 +74,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (holder instanceof MoviesViewHolder){
             MoviesViewHolder moviesViewHolder = (MoviesViewHolder)holder;
             Result result = mResults.get(position);
-            Picasso.with(mContext).load(AppConstants.IMAGE_BASE_URL+AppConstants.POSTER_IMAGE_SIZE+result.getPosterPath()).
+            Picasso.with(mContext).load(AppConstants.IMAGE_BASE_URL
+                    .concat(AppConstants.POSTER_IMAGE_SIZE).concat(result.getPosterPath())).
                     placeholder(R.drawable.ic_place_holder).into(moviesViewHolder.mImageView);
             
         }else if(holder instanceof LoadingViewHolder){

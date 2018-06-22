@@ -7,7 +7,6 @@ package com.udacity.androidnanodegree.popularmovies.utills;
 
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 
 /**
@@ -39,7 +38,6 @@ public abstract class PagingListener extends RecyclerView.OnScrollListener {
                     && lastVisibleItemPosition >= 0
                     && totalItemCount <= getTotalPageCount()) {
                 loadMoreItems();
-                Log.d("TAG", "onScrolled: called");
             }
         }
     }

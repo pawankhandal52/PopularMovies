@@ -26,6 +26,7 @@
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
         </activity>
+        <!--This the detail screens-->
         <activity
             android:name=".activity.MovieDetailsActivity"
             android:label="@string/title_activity_movie_details"

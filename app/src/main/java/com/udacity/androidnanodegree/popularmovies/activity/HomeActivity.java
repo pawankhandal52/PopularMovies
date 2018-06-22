@@ -96,9 +96,11 @@ public class HomeActivity extends AppCompatActivity implements MoviesAdapter.Mov
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mMoviesAdapter);
     
-        Log.e(TAG, "onCreate: " );
+        
         //Set the Movies listing type
         mMoviesTypeTextView.setText(R.string.popular_movies);
+        
+        //This is the scrollListener for paging /load more data
         mRecyclerView.addOnScrollListener(new PagingListener(gridLayoutManager) {
             @Override
             public void loadMoreItems() {
@@ -152,6 +154,7 @@ public class HomeActivity extends AppCompatActivity implements MoviesAdapter.Mov
     
         mMoviesApi = ConfigApi.getRetrofit().create(MoviesApi.class);
     
+        //This receiver and called every time when network is changed
         mNetworkReceiver = new NetworkReceiver(new NetworkReceiver.NetworkListener() {
             @Override
             public void connectionAvailable() {

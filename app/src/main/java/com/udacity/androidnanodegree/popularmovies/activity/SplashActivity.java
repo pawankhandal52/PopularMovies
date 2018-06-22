@@ -33,6 +33,7 @@ public class SplashActivity extends AppCompatActivity {
     TextView mAppNameTextView;
     @BindView(R.id.extra_tv)
     TextView mExtraTextView;
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +45,7 @@ public class SplashActivity extends AppCompatActivity {
     
     //This Function  call to show the next activity
     private void startHomeActivity(){
+        final long SPLASH_DELAYS_TIME_IN_MS = 5000;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -52,22 +54,23 @@ public class SplashActivity extends AppCompatActivity {
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
             }
-        },5000);
+        }, SPLASH_DELAYS_TIME_IN_MS);
     }
     
     private void setAnimation() {
-        ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(mExtraTextView, "scaleX", 5.0F, 1.0F);
+        final long TEXT_ANIMATION_TIME_DURATION = 1000;
+        ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(mExtraTextView, getString(R.string.scaleX), 5.0F, 1.0F);
         scaleXAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-        scaleXAnimation.setDuration(1000);
-        ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(mExtraTextView, "scaleY", 5.0F, 1.0F);
+        scaleXAnimation.setDuration(TEXT_ANIMATION_TIME_DURATION);
+        ObjectAnimator scaleYAnimation = ObjectAnimator.ofFloat(mExtraTextView, getString(R.string.scaleY), 5.0F, 1.0F);
         scaleYAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-        scaleYAnimation.setDuration(1000);
-        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(mExtraTextView, "alpha", 0.0F, 1.0F);
+        scaleYAnimation.setDuration(TEXT_ANIMATION_TIME_DURATION);
+        ObjectAnimator alphaAnimation = ObjectAnimator.ofFloat(mExtraTextView, getString(R.string.alpha), 0.0F, 1.0F);
         alphaAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-        alphaAnimation.setDuration(1000);
+        alphaAnimation.setDuration(TEXT_ANIMATION_TIME_DURATION);
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.play(scaleXAnimation).with(scaleYAnimation).with(alphaAnimation);
-        animatorSet.setStartDelay(1000);
+        animatorSet.setStartDelay(TEXT_ANIMATION_TIME_DURATION);
         animatorSet.start();
     
     

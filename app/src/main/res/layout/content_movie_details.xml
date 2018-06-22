@@ -98,7 +98,6 @@
             android:layout_marginStart="@dimen/text_margin"
             android:layout_marginTop="@dimen/text_margin"
             android:fontFamily="sans-serif-condensed"
-            android:lineSpacingExtra="8sp"
             android:textAlignment="viewStart"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
             android:textColor="@color/colorText"

@@ -101,7 +101,7 @@ public class MovieDetailsActivity extends AppCompatActivity {
                 if (result.getReleaseDate() != null){
                     mMovieReleaseDateTextView.setText(result.getReleaseDate());
                 }
-                mVoteCountTextView.setText(String.format("Total Vote (%s)", String.valueOf(result.getVoteCount())));
+                mVoteCountTextView.setText(String.format(getString(R.string.total_vote), String.valueOf(result.getVoteCount())));
                 if (result.getOverview() != null){
                     mOverViewTextView.setText(result.getOverview());
                 }
