@@ -11,6 +11,10 @@
         <item android:id="@+id/action_popular"
             android:title="@string/most_popular"
             app:showAsAction="never"/>
+        <item android:icon="@drawable/ic_favorite_black_32dp"
+            android:id="@+id/action_get_fav_movies"
+            app:showAsAction="ifRoom"
+            android:title="@string/favorite"/>
 
 
 </menu>

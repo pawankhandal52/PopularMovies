@@ -29,9 +29,31 @@
     <string name="top_rated">Top Rated</string>
     <string name="something_went_wrong">Something Went Wrong Try Again!!</string>
     <string name="look_before_you_watch">Look before you watch</string>
-    <string name="total_vote">Total Vote (%s)</string>
+    <string name="total_vote">Vote(%s)</string>
     <string name="scaleX" translatable="false">scaleX</string>
     <string name="scaleY" translatable="false">scaleY</string>
     <string name="alpha" translatable="false">alpha</string>
+    <string name="tab_title_details">Details</string>
+    <string name="tab_title_trailers">Trailers</string>
+    <string name="tab_title_reviews">Reviews</string>
+    <string name="movie_bundle_key" translatable="false">movie_bundle</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="author_name">Author</string>
+    <string name="view_more">View More</string>
+    <string name="view_less">View Less</string>
+    <string name="no_reviews">No Reviews Found</string>
+    <string name="trailer_items">Trailer Items</string>
+    <string name="play_trailer_on_a_youtube">Play Trailer on a youtube</string>
+    <string name="tariler_name">Trailer Name</string>
+    <string name="no_trailer_founds">No Trailer Found</string>
+    <string name="no_app_found_to_view">No App found for this</string>
+    <string name="favorite">Favorite</string>
+    <string name="unable_to_save_your_fav_movies">Unable to save your choice try again!!!</string>
+    <string name="favorite_movie">Favorite Movies</string>
+    <string name="fav_movie_key" translatable="false">fav_movie_key</string>
+    <string name="unable_to_unfav">Unable to make Unfavorite. Please Try again later!!</string>
+    <string name="no_fav_movies">No Favorite movie found</string>
 
 </resources>

@@ -13,7 +13,7 @@
     <dimen name="card_elevation">10dp</dimen>
     <dimen name="detail_cardview_height">200dp</dimen>
     <dimen name="iv_margin_top">8dp</dimen>
-    <dimen name="poster_height">200dp</dimen>
+    <dimen name="poster_height">300dp</dimen>
     <dimen name="card_margin_image">5dp</dimen>
     <dimen name="margin_placeholder_card">20dp</dimen>
     <dimen name="app_name_margin">115dp</dimen>

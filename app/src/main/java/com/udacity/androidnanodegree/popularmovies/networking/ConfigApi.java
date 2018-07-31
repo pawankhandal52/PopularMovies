@@ -18,10 +18,11 @@ public class ConfigApi {
     
     /**
      * This method is used to get the Retrofit build object.
+     *
      * @return Retrofit object after building.
      */
-    public static Retrofit getRetrofit(){
-        if (sRetrofit == null){
+    public static Retrofit getRetrofit() {
+        if (sRetrofit == null) {
             sRetrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(AppConstants.BASE_URL)
@@ -29,6 +30,5 @@ public class ConfigApi {
         }
         return sRetrofit;
     }
-    
     
 }

@@ -44,12 +44,12 @@ public class SplashActivity extends AppCompatActivity {
     }
     
     //This Function  call to show the next activity
-    private void startHomeActivity(){
+    private void startHomeActivity() {
         final long SPLASH_DELAYS_TIME_IN_MS = 5000;
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this,HomeActivity.class);
+                Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
                 //This below line is used to remove splash activity from back stack start new Stack.
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
@@ -72,9 +72,7 @@ public class SplashActivity extends AppCompatActivity {
         animatorSet.play(scaleXAnimation).with(scaleYAnimation).with(alphaAnimation);
         animatorSet.setStartDelay(TEXT_ANIMATION_TIME_DURATION);
         animatorSet.start();
-    
-    
-    
+        
         //This for the App Icon Animation
         mSplashIconImageView.setAlpha(1.0F);
         Animation anim = AnimationUtils.loadAnimation(this, R.anim.fade);
