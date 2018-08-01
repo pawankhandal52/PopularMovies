@@ -331,7 +331,7 @@ public class MovieDetailsActivity extends AppCompatActivity{
                         public void run() {
                             isFav = false;
                             mMenu.getItem(0).setIcon(R.drawable.ic_favorite_border_black_24dp);
-                    
+                            finish();
                         }
                     });
             

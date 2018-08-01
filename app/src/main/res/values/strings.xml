@@ -26,6 +26,7 @@
     <string name="error_404">The resource you requested could not be found.</string>
     <string name="unknown_error">Unknown Error Try Again!!</string>
     <string name="popular_movies">Popular Movies</string>
+    <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="something_went_wrong">Something Went Wrong Try Again!!</string>
     <string name="look_before_you_watch">Look before you watch</string>

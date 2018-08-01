@@ -15,8 +15,6 @@
         android:theme="@style/AppTheme">
 
         <!-- This activity will show all the popular movies in grid -->
-        <activity android:name=".activity.HomeActivity">
-        </activity>
         <!-- This the splash screen -->
         <activity
             android:name=".activity.SplashActivity"
@@ -37,6 +35,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.udacity.androidnanodegree.popularmovies.activity.HomeActivity"/>
         </activity>
+        <activity android:name=".activity.HomeActivity"/>
     </application>
 
 </manifest>

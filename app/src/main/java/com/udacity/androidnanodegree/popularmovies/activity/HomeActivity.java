@@ -1,3 +1,8 @@
+/*
+ * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Author Pawan Kumar Sharma
+ * All Rights Reserved
+ */
 package com.udacity.androidnanodegree.popularmovies.activity;
 
 import android.os.Bundle;
@@ -12,13 +17,15 @@ import com.udacity.androidnanodegree.popularmovies.fragments.FavoriteMovieFragme
 import com.udacity.androidnanodegree.popularmovies.fragments.PopularMoviesFragment;
 import com.udacity.androidnanodegree.popularmovies.fragments.TopRatedFragment;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by stemdot on 7/31/18,18
+ * This is home activity which shows popular movies, Top Rated Movie and User favorites movie in Child fragment
  */
-public class HomeActivity1 extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity {
     @BindView(R.id.home_tab_layout)
     TabLayout mTabLayout;
     @BindView(R.id.home_view_pager)
@@ -27,7 +34,7 @@ public class HomeActivity1 extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home_1);
+        setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
     
     
@@ -57,6 +64,7 @@ public class HomeActivity1 extends AppCompatActivity {
         });
     }
     
+    //Setup view pager with tabs fragment
     private void setUpViewPager(ViewPager viewPager){
         HomeViewPagerAdapter homeViewPagerAdapter = new HomeViewPagerAdapter(getSupportFragmentManager());
         homeViewPagerAdapter.addFragment(new PopularMoviesFragment(),getString(R.string.popular));
@@ -65,12 +73,13 @@ public class HomeActivity1 extends AppCompatActivity {
         viewPager.setAdapter(homeViewPagerAdapter);
     }
     
+    //This is used to set the icon and text of tabs
     private void setTabIcon(){
-        mTabLayout.getTabAt(0).setIcon(R.drawable.ic_thumb_up_black_24dp);
-        mTabLayout.getTabAt(1).setIcon(R.drawable.ic_star_black_24dp);
-        mTabLayout.getTabAt(2).setIcon(R.drawable.ic_favorite_red_32dp);
-        mTabLayout.getTabAt(0).setText(getString(R.string.popular));
-        mTabLayout.getTabAt(1).setText(getString(R.string.top_rated));
-        mTabLayout.getTabAt(2).setText(getString(R.string.favorite));
+        Objects.requireNonNull(mTabLayout.getTabAt(0)).setIcon(R.drawable.ic_thumb_up_black_24dp);
+        Objects.requireNonNull(mTabLayout.getTabAt(1)).setIcon(R.drawable.ic_star_black_24dp);
+        Objects.requireNonNull(mTabLayout.getTabAt(2)).setIcon(R.drawable.ic_favorite_red_32dp);
+        Objects.requireNonNull(mTabLayout.getTabAt(0)).setText(getString(R.string.popular));
+        Objects.requireNonNull(mTabLayout.getTabAt(1)).setText(getString(R.string.top_rated));
+        Objects.requireNonNull(mTabLayout.getTabAt(2)).setText(getString(R.string.favorite));
     }
 }

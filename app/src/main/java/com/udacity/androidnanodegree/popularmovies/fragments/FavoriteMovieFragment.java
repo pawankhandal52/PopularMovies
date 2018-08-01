@@ -1,18 +1,73 @@
+/*
+ * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Author Pawan Kumar Sharma
+ * All Rights Reserved
+ */
 package com.udacity.androidnanodegree.popularmovies.fragments;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity;
+import com.udacity.androidnanodegree.popularmovies.adapter.FavoriteMoviesAdapter;
+import com.udacity.androidnanodegree.popularmovies.database.FavoriteMoviesEntity;
+import com.udacity.androidnanodegree.popularmovies.database.PopularMovieDatabase;
+import com.udacity.androidnanodegree.popularmovies.networking.MoviesApi;
+
+import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
- * A simple {@link Fragment} subclass.
+ * This fragment shows the user favorite movies
  */
-public class FavoriteMovieFragment extends Fragment {
+public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAdapter.FavMovieItemClickListner{
     
+    
+    private static final String TAG = FavoriteMovieFragment.class.getSimpleName();
+    private Unbinder mUnbinder;
+    @BindView(R.id.movie_rv)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.swipe_refresh)
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
+    @BindView(R.id.error_rl)
+    ConstraintLayout mErrorConstraintLayout;
+    @BindView(R.id.wifi_off_iv)
+    ImageView mNoInternetView;
+    @BindView(R.id.error_desc_tv)
+    TextView mErrorDescTextView;
+    @BindView(R.id.swipe_to_refresh_tv)
+    TextView mSwipeTextView;
+    private MoviesApi mMoviesApi;
+    private FavoriteMoviesAdapter mFavoriteMoviesAdapter;
+    
+    
+    //Database instance to get fav movies of user
+    private PopularMovieDatabase mPopularMovieDatabase;
+    private Context mContext;
     public FavoriteMovieFragment() {
         // Required empty public constructor
     }
@@ -21,7 +76,103 @@ public class FavoriteMovieFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_favorite_movie, container, false);
+        View view =  inflater.inflate(R.layout.fragment_favorite_movie, container, false);
+        mUnbinder =  ButterKnife.bind(this,view);
+        mContext = getActivity();
+        mPopularMovieDatabase = PopularMovieDatabase.getInstance(mContext.getApplicationContext());
+    
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,
+                getResources().getInteger(R.integer.grid_column_count));
+    
+        //set the adapter
+        mFavoriteMoviesAdapter  = new FavoriteMoviesAdapter(mContext,this);
+    
+    
+        //init the recycler view
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        mRecyclerView.setAdapter(mFavoriteMoviesAdapter);
+    
+    
+        /*
+         * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
+         * performs a swipe-to-refresh gesture.
+         */
+        mSwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                    
+                        // This method performs the actual data-refresh operation.
+                        // The method calls setRefreshing(false) when it's finished.
+                        
+                            mFavoriteMoviesAdapter.removeAllItems();
+                            getUserFavMovieFromDatabase();
+                        
+                    
+                    }
+                }
+        );
+        getUserFavMovieFromDatabase();
+        return view;
     }
     
+    @Override
+    public void onItemClick(FavoriteMoviesEntity favoriteMoviesEntity, View view) {
+        Intent intent = new Intent(mContext, MovieDetailsActivity.class);
+        // Log.e(TAG, "onItemClick: Fav" );
+        //intent.putExtra(getString(R.string.movie_bundle_key), );
+        intent.putExtra(getString(R.string.fav_movie_key),favoriteMoviesEntity.getMovieId());
+        ActivityOptionsCompat options = ActivityOptionsCompat.
+                makeSceneTransitionAnimation(getActivity(), view, getString(R.string.poster_image_transition));
+        startActivity(intent, options.toBundle());
+    }
+    
+    private void getUserFavMovieFromDatabase() {
+        
+        
+        mProgressBar.setVisibility(View.GONE);
+        LiveData<List<FavoriteMoviesEntity>> favoriteMoviesEntitiesLiveData= mPopularMovieDatabase.favoriteMoviesDao()
+                .getAllFavoritesMovies();
+        
+        favoriteMoviesEntitiesLiveData.observe(this, new Observer<List<FavoriteMoviesEntity>>() {
+            @Override
+            public void onChanged(@Nullable List<FavoriteMoviesEntity> favoriteMoviesEntities) {
+                
+                if (favoriteMoviesEntities != null) {
+                    Log.e(TAG, "getUserFavMovieFromDatabase: size"+favoriteMoviesEntities.size() );
+                    mFavoriteMoviesAdapter.removeAllItems();
+                    if (favoriteMoviesEntities.size()==0){
+                        Log.e(TAG, "onChanged: 1" );
+                        mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
+                        mErrorDescTextView.setText(R.string.no_fav_movies);
+                        showErrorPage();
+                    }else{
+                        Log.e(TAG, "onChanged: 2" );
+                        showData();
+                        mFavoriteMoviesAdapter.addAllFavMovie(favoriteMoviesEntities);
+                    }
+                }
+            }
+        });
+    
+        mSwipeRefreshLayout.setRefreshing(false);
+        
+        
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mUnbinder.unbind();
+    }
+    private void showErrorPage() {
+        mProgressBar.setVisibility(View.GONE);
+        mErrorConstraintLayout.setVisibility(View.VISIBLE);
+    }
+    
+    private void showData() {
+        mProgressBar.setVisibility(View.GONE);
+        mErrorConstraintLayout.setVisibility(View.GONE);
+    }
 }
