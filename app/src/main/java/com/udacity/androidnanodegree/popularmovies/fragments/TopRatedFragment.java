@@ -5,6 +5,8 @@
  */
 package com.udacity.androidnanodegree.popularmovies.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -12,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -30,6 +33,8 @@ import android.widget.Toast;
 
 import com.udacity.androidnanodegree.popularmovies.BuildConfig;
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MoviesViewModel;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MoviesViewModelFactory;
 import com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity;
 import com.udacity.androidnanodegree.popularmovies.adapter.MoviesAdapter;
 import com.udacity.androidnanodegree.popularmovies.models.movies.Movies;
@@ -215,23 +220,24 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
         startActivity(intent, options.toBundle());
     }
     
-    private void loadMovies() {
-        
+    private void loadMovies(){
         mProgressBar.setVisibility(View.VISIBLE);
-        
-        Call<Movies> moviesCall = callTopRatedMoviesApi();
-        
-        
-        moviesCall.enqueue(new Callback<Movies>() {
+        //Check for the null value
+        MoviesViewModelFactory moviesViewModelFactory = new MoviesViewModelFactory(false,currentPage);
+        MoviesViewModel moviesViewModel = ViewModelProviders.of(this,moviesViewModelFactory).get(MoviesViewModel.class);
+        moviesViewModel.getMoviesResponseLiveData().observe(this, new Observer<Response<Movies>>() {
             @Override
-            public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
-                //Check first for response is successful or not
+            public void onChanged(@Nullable Response<Movies> moviesResponse) {
                 mSwipeRefreshLayout.setRefreshing(false);
-                //Log.e(TAG, "loadMovies: "+response.raw().request().url() );
-                if (response.isSuccessful()) {
+                if (moviesResponse == null) {
+                    mErrorConstraintLayout.setVisibility(View.VISIBLE);
+                    mProgressBar.setVisibility(View.GONE);
+                    return;
+                }
+                if (moviesResponse.isSuccessful()) {
                     
-                    List<Result> results = getResultFromResponse(response);
-                    mTotalPages = getTotalPages(response);
+                    List<Result> results = getResultFromResponse(moviesResponse);
+                    mTotalPages = getTotalPages(moviesResponse);
                     if (results == null) {
                         mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
                         mErrorDescTextView.setText(R.string.something_went_wrong);
@@ -239,8 +245,6 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
                     } else {
                         showData();
                     }
-                    
-                    
                     mMoviesAdapter.addAll(results);
                     if (currentPage <= mTotalPages) {
                         mMoviesAdapter.addLoadingFooter();
@@ -250,7 +254,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
                 } else {
                     showErrorPage();
                     
-                    switch (response.code()) {
+                    switch (moviesResponse.code()) {
                         case 401:
                             mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
                             mErrorDescTextView.setText(R.string.error_401);
@@ -267,13 +271,8 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
                     }
                 }
             }
-            
-            @Override
-            public void onFailure(@NonNull Call<Movies> call, @NonNull Throwable t) {
-                mErrorConstraintLayout.setVisibility(View.VISIBLE);
-                mProgressBar.setVisibility(View.GONE);
-            }
         });
+        
     }
     
     private void loadMoreMovies() {

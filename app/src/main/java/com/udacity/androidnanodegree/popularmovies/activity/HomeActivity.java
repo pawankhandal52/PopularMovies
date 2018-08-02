@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies  Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
@@ -16,6 +16,7 @@ import com.udacity.androidnanodegree.popularmovies.adapter.HomeViewPagerAdapter;
 import com.udacity.androidnanodegree.popularmovies.fragments.FavoriteMovieFragment;
 import com.udacity.androidnanodegree.popularmovies.fragments.PopularMoviesFragment;
 import com.udacity.androidnanodegree.popularmovies.fragments.TopRatedFragment;
+import com.udacity.androidnanodegree.popularmovies.utills.Utills;
 
 import java.util.Objects;
 
@@ -62,6 +63,11 @@ public class HomeActivity extends AppCompatActivity {
             
             }
         });
+        
+        if (!Utills.isConnectionAvailable(this)){
+            //Objects.requireNonNull(mTabLayout.getTabAt(3)).select();
+            mViewPager.setCurrentItem(3);
+        }
     }
     
     //Setup view pager with tabs fragment

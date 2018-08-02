@@ -6,11 +6,13 @@
 package com.udacity.androidnanodegree.popularmovies.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +20,7 @@ import com.squareup.picasso.Picasso;
 import com.udacity.androidnanodegree.popularmovies.R;
 import com.udacity.androidnanodegree.popularmovies.constants.AppConstants;
 import com.udacity.androidnanodegree.popularmovies.models.trailers.Result;
+import com.udacity.androidnanodegree.popularmovies.utills.Utills;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,15 +56,32 @@ public class MoviesTrailersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
             if (holder instanceof TrailersHolder){
                 TrailersHolder trailersHolder = (TrailersHolder)holder;
-                Result result = mTrailerResultList.get(position);
-                if (result.getName() != null){
+                final Result result = mTrailerResultList.get(position);
+                /*if (result.getName() != null){
                     trailersHolder.mTrailerTitleTextView.setText(result.getName());
-                }
+                }*/
                 if (result.getKey() != null){
                     Picasso.with(mContext).load(getThumbUrl(result.getKey())).
                             placeholder(R.drawable.ic_place_holder).into(trailersHolder.mTrailerThumbImageView);
                 }
+                trailersHolder.mShareButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        shareImage(Utills.getYoutubeLink(result.getKey()));
+                    }
+                });
+               
             }
+    }
+    
+    // Method to share any image.
+    private void shareImage(String youtubeLink) {
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                "Hey check out this trailer "+youtubeLink);
+        sendIntent.setType("text/plain");
+        mContext.startActivity(sendIntent);
     }
     
     @Override
@@ -92,6 +112,8 @@ public class MoviesTrailersAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         ImageView mTrailerThumbImageView;
         @BindView(R.id.trailer_title_tv)
         TextView mTrailerTitleTextView;
+        @BindView(R.id.shared_ib)
+        ImageButton mShareButton;
          TrailersHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this,itemView);

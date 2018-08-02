@@ -9,6 +9,8 @@ package com.udacity.androidnanodegree.popularmovies.fragments;
  * This fragment is used to show the Movie Reviews selected by the users
  */
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -35,6 +37,8 @@ import android.widget.Toast;
 
 import com.udacity.androidnanodegree.popularmovies.BuildConfig;
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieReviewsViewModel;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieReviewsViewModelFactory;
 import com.udacity.androidnanodegree.popularmovies.adapter.MoviesReviewAdapter;
 import com.udacity.androidnanodegree.popularmovies.models.reviews.MovieReviews;
 import com.udacity.androidnanodegree.popularmovies.models.reviews.Result;
@@ -206,10 +210,65 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
     }
     
   
-    
+    private void loadMovieReviews(){
+        mProgressBar.setVisibility(View.VISIBLE);
+        MovieReviewsViewModelFactory movieReviewsViewModelFactory = new MovieReviewsViewModelFactory(String.valueOf(mMovieId),currentPage);
+        MovieReviewsViewModel movieReviewsViewModel = ViewModelProviders.of(this,movieReviewsViewModelFactory).get(MovieReviewsViewModel.class);
+        movieReviewsViewModel.getMovieReviewsResponseLiveData().observe(this, new Observer<Response<MovieReviews>>() {
+            @Override
+            public void onChanged(@Nullable Response<MovieReviews> movieReviewsResponse) {
+                mSwipeRefreshLayout.setRefreshing(false);
+                if (movieReviewsResponse == null){
+                    showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,getString(R.string.seems_you_lose_the_internet_connection));
+                    return;
+                }
+                if (movieReviewsResponse.isSuccessful()){
+                    List<Result> results = getResultFromMovieReviewResponse(movieReviewsResponse);
+                    if (results != null){
+                        if (results.size() != 0){
+                            showData();
+                            mTotalPages = getTotalPages(movieReviewsResponse);
+                            mMoviesReviewAdapter.addAllReviews(results);
+                            if (currentPage < mTotalPages) {
+                                mMoviesReviewAdapter.addLoadingItem();
+                                // Log.e(TAG, "onResponse: "+currentPage +", total" );
+                            } else {
+                                isLastPage = true;
+                            }
+                        }else{
+                            showErrorPage(R.drawable.ic_stars_black_24dp,
+                                    getString(R.string.no_reviews));
+                        }
+            
+                    }else{
+                        showErrorPage(R.mipmap.ic_launcher_round,
+                                getString(R.string.something_went_wrong));
+                    }
+        
+        
+                }else{
+                    switch (movieReviewsResponse.code()) {
+                        case 401:
+                            Log.e(TAG, " Invalid API key: You must be granted a valid key.");
+                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_401));
+                            break;
+                        case 404:
+                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_404));
+                            Log.e(TAG, " The resource you requested could not be found.");
+                            break;
+                        default:
+                            Log.e(TAG, " Unknown Error Try Again!!");
+                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.unknown_error));
+                            break;
+            
+                    }
+                }
+            }
+        });
+    }
 
     
-    private void loadMovieReviews(){
+/*    private void loadMovieReviews(){
         mProgressBar.setVisibility(View.VISIBLE);
         callMoviesReview().enqueue(new Callback<MovieReviews>(){
     
@@ -268,7 +327,7 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
                 showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,getString(R.string.seems_you_lose_the_internet_connection));
             }
         });
-    }
+    }*/
     
     private void loadMoreMoviesReviews(){
         callMoviesReview().enqueue(new Callback<MovieReviews>(){
@@ -322,9 +381,9 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
         }
         return 0;
     }
+    
     private Call<MovieReviews> callMoviesReview(){
-        //Log.e(TAG, "callMoviesReview: "+currentPage );
-        return mMoviesApi.getMovieReviews(String.valueOf(mMovieId), BuildConfig.ApiKey,currentPage);
+        return ConfigApi.getRetrofit().create(MoviesApi.class).getMovieReviews(String.valueOf(mMovieId), BuildConfig.ApiKey,currentPage);
     }
     
     private List<Result>  getResultFromMovieReviewResponse(Response<MovieReviews> movieReviewsResponse){

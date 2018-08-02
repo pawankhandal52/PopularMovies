@@ -56,5 +56,6 @@
     <string name="fav_movie_key" translatable="false">fav_movie_key</string>
     <string name="unable_to_unfav">Unable to make Unfavorite. Please Try again later!!</string>
     <string name="no_fav_movies">No Favorite movie found</string>
+    <string name="share_icon">share</string>
 
 </resources>

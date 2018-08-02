@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:contentDescription="@string/play_trailer_on_a_youtube"
-            android:src="@drawable/ic_play_circle_filled_black_32dp"/>
+            android:src="@drawable/ic_play_arrow_black_24dp"/>
 
         <TextView
             android:id="@+id/trailer_title_tv"
@@ -40,6 +40,16 @@
             android:textColor="@color/colorHomeBackground"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"/>
+
+        <ImageButton
+            android:id="@+id/shared_ib"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
+            android:contentDescription="@string/share_icon"
+            android:src="@drawable/ic_share_black_24dp"/>
     </RelativeLayout>
 
 

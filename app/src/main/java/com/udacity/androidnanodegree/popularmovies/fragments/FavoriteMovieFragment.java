@@ -5,8 +5,8 @@
  */
 package com.udacity.androidnanodegree.popularmovies.fragments;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,11 +27,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.FavoriteMoviesViewModel;
 import com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity;
 import com.udacity.androidnanodegree.popularmovies.adapter.FavoriteMoviesAdapter;
 import com.udacity.androidnanodegree.popularmovies.database.FavoriteMoviesEntity;
-import com.udacity.androidnanodegree.popularmovies.database.PopularMovieDatabase;
-import com.udacity.androidnanodegree.popularmovies.networking.MoviesApi;
 
 import java.util.List;
 
@@ -61,12 +60,10 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
     TextView mErrorDescTextView;
     @BindView(R.id.swipe_to_refresh_tv)
     TextView mSwipeTextView;
-    private MoviesApi mMoviesApi;
     private FavoriteMoviesAdapter mFavoriteMoviesAdapter;
     
     
     //Database instance to get fav movies of user
-    private PopularMovieDatabase mPopularMovieDatabase;
     private Context mContext;
     public FavoriteMovieFragment() {
         // Required empty public constructor
@@ -79,7 +76,6 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
         View view =  inflater.inflate(R.layout.fragment_favorite_movie, container, false);
         mUnbinder =  ButterKnife.bind(this,view);
         mContext = getActivity();
-        mPopularMovieDatabase = PopularMovieDatabase.getInstance(mContext.getApplicationContext());
     
         GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,
                 getResources().getInteger(R.integer.grid_column_count));
@@ -132,30 +128,25 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
         
         
         mProgressBar.setVisibility(View.GONE);
-        LiveData<List<FavoriteMoviesEntity>> favoriteMoviesEntitiesLiveData= mPopularMovieDatabase.favoriteMoviesDao()
-                .getAllFavoritesMovies();
-        
-        favoriteMoviesEntitiesLiveData.observe(this, new Observer<List<FavoriteMoviesEntity>>() {
+    
+        FavoriteMoviesViewModel favoriteMoviesViewModel = ViewModelProviders.of(this).get(FavoriteMoviesViewModel.class);
+        favoriteMoviesViewModel.getFavoriteMoviesListLiveData().observe(this, new Observer<List<FavoriteMoviesEntity>>() {
             @Override
             public void onChanged(@Nullable List<FavoriteMoviesEntity> favoriteMoviesEntities) {
-                
+                Log.d(TAG, "Updating data from view model");
                 if (favoriteMoviesEntities != null) {
-                    Log.e(TAG, "getUserFavMovieFromDatabase: size"+favoriteMoviesEntities.size() );
                     mFavoriteMoviesAdapter.removeAllItems();
                     if (favoriteMoviesEntities.size()==0){
-                        Log.e(TAG, "onChanged: 1" );
                         mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
                         mErrorDescTextView.setText(R.string.no_fav_movies);
                         showErrorPage();
                     }else{
-                        Log.e(TAG, "onChanged: 2" );
                         showData();
                         mFavoriteMoviesAdapter.addAllFavMovie(favoriteMoviesEntities);
                     }
                 }
             }
         });
-    
         mSwipeRefreshLayout.setRefreshing(false);
         
         

@@ -1,12 +1,12 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
 package com.udacity.androidnanodegree.popularmovies.activity;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieDetailsViewModel;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieDetailsViewModelFactory;
 import com.udacity.androidnanodegree.popularmovies.adapter.DetailsViewPagerAdapter;
 import com.udacity.androidnanodegree.popularmovies.constants.AppConstants;
 import com.udacity.androidnanodegree.popularmovies.database.FavoriteMoviesEntity;
@@ -217,7 +219,6 @@ public class MovieDetailsActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case R.id.action_favorite:
-                Log.e(TAG, "onOptionsItemSelected: "+isFav);
                 if (isFav){
                     
                     removeMovieFromDatabase(bundle);
@@ -250,12 +251,14 @@ public class MovieDetailsActivity extends AppCompatActivity{
                 
                 //Now check if movie is fav if yes then change the icon to fav
                 if (result!= null){
-                    //Fetch movie by id using live data
-                     LiveData<FavoriteMoviesEntity> favoriteMoviesEntity = mPopularMovieDatabase.favoriteMoviesDao().getFavMovieById(result.getId());
-                   // Log.e(TAG, "run1: data is called from data base by movie id" );
-                    favoriteMoviesEntity.observe(this, new Observer<FavoriteMoviesEntity>() {
+                    
+                    //Now we use view model so there is n need to call database operation here
+                    MovieDetailsViewModelFactory movieDetailsViewModelFactory = new MovieDetailsViewModelFactory(mPopularMovieDatabase,result.getId());
+                    MovieDetailsViewModel movieDetailsViewModel = ViewModelProviders.of(this,movieDetailsViewModelFactory).get(MovieDetailsViewModel.class);
+                    movieDetailsViewModel.getFavoriteMoviesEntityLiveData().observe(this, new Observer<FavoriteMoviesEntity>() {
                         @Override
                         public void onChanged(@Nullable FavoriteMoviesEntity favoriteMoviesEntity) {
+                            Log.d(TAG, "onChanged: with View Model");
                             if (favoriteMoviesEntity!=null){
                                 isFav = true;
         
@@ -277,11 +280,16 @@ public class MovieDetailsActivity extends AppCompatActivity{
                 final int movieId = bundle.getInt(getResources().getString(R.string.fav_movie_key));
                 isFav = true;
     
-                LiveData<FavoriteMoviesEntity> favoriteMoviesEntity = mPopularMovieDatabase.favoriteMoviesDao().getFavMovieById(movieId);
-                //Log.e(TAG, "run2: data is called from data base by movie id" );
-                favoriteMoviesEntity.observe(this, new Observer<FavoriteMoviesEntity>() {
+                
+    
+    
+                //Now we use view model so there is n need to call database operation here
+                MovieDetailsViewModelFactory movieDetailsViewModelFactory = new MovieDetailsViewModelFactory(mPopularMovieDatabase,movieId);
+                MovieDetailsViewModel movieDetailsViewModel = ViewModelProviders.of(this,movieDetailsViewModelFactory).get(MovieDetailsViewModel.class);
+                movieDetailsViewModel.getFavoriteMoviesEntityLiveData().observe(this, new Observer<FavoriteMoviesEntity>() {
                     @Override
                     public void onChanged(@Nullable FavoriteMoviesEntity favoriteMoviesEntity) {
+                        Log.d(TAG, "onChanged:1 with View Model");
                         if (favoriteMoviesEntity != null && favoriteMoviesEntity.getBackdropPath() != null) {
                             Picasso.with(mContext).load(AppConstants.IMAGE_BASE_URL.concat(AppConstants.BANNER_IMAGE_SIZE).concat(favoriteMoviesEntity.getBackdropPath())).
                                     placeholder(R.drawable.ic_photo_black_24dp).into(mBannerImageView);
@@ -325,7 +333,7 @@ public class MovieDetailsActivity extends AppCompatActivity{
                 @Override
                 public void run() {
                     int b = mPopularMovieDatabase.favoriteMoviesDao().deleteFavMovieById(movieId);
-                    Log.e(TAG, "run: "+b +"movie id "+movieId);
+                    //Log.e(TAG, "run: "+b +"movie id "+movieId);
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

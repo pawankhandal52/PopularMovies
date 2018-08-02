@@ -5,13 +5,14 @@
  */
 package com.udacity.androidnanodegree.popularmovies.fragments;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -28,8 +29,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.udacity.androidnanodegree.popularmovies.BuildConfig;
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieTrailerViewModelFactory;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieTrailersViewModel;
 import com.udacity.androidnanodegree.popularmovies.adapter.MoviesTrailersAdapter;
 import com.udacity.androidnanodegree.popularmovies.constants.AppConstants;
 import com.udacity.androidnanodegree.popularmovies.models.trailers.MovieTrailers;
@@ -37,14 +39,13 @@ import com.udacity.androidnanodegree.popularmovies.models.trailers.Result;
 import com.udacity.androidnanodegree.popularmovies.networking.ConfigApi;
 import com.udacity.androidnanodegree.popularmovies.networking.MoviesApi;
 import com.udacity.androidnanodegree.popularmovies.utills.NetworkReceiver;
+import com.udacity.androidnanodegree.popularmovies.utills.Utills;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
-import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
@@ -153,16 +154,23 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
     
     
     private void loadMoviesTrailers() {
-        callMovieTrailers().enqueue(new Callback<MovieTrailers>() {
+        MovieTrailerViewModelFactory movieTrailerViewModelFactory = new MovieTrailerViewModelFactory(String.valueOf(mMovieId));
+        MovieTrailersViewModel movieTrailersViewModel = ViewModelProviders.of(this,movieTrailerViewModelFactory).get(MovieTrailersViewModel.class);
+        movieTrailersViewModel.getMovieTrailerResponseLiveData().observe(this, new Observer<Response<MovieTrailers>>() {
             @Override
-            public void onResponse(@NonNull Call<MovieTrailers> call, @NonNull Response<MovieTrailers> response) {
-                Log.e(TAG, "onResponse: "+response.raw().request().url() );
-                if (response.isSuccessful()){
-                    List<Result> results = getResultFromMovieTrailerResponse(response);
+            public void onChanged(@Nullable Response<MovieTrailers> movieTrailersResponse) {
+                if (movieTrailersResponse == null){
+                    showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,
+                            mContext.getResources().getString(R.string.seems_you_lose_the_internet_connection));
+                    return;
+                }
+    
+                if (movieTrailersResponse.isSuccessful()){
+                    List<Result> results = getResultFromMovieTrailerResponse(movieTrailersResponse);
                     if (results != null){
                         if (results.size() != 0){
-                                showData();
-                                mMoviesTrailersAdapter.addAllTrailer(results);
+                            showData();
+                            mMoviesTrailersAdapter.addAllTrailer(results);
                         }else{
                             showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.no_trailer_founds));
                         }
@@ -171,7 +179,7 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
                                 getString(R.string.something_went_wrong));
                     }
                 }else{
-                    switch (response.code()){
+                    switch (movieTrailersResponse.code()){
                         case 401:
                             Log.e(TAG, " Invalid API key: You must be granted a valid key.");
                             showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_401));
@@ -187,20 +195,12 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
                     }
                 }
             }
-    
-            @Override
-            public void onFailure(@NonNull Call<MovieTrailers> call, @NonNull Throwable t) {
-                Log.e(TAG, "onFailure: "+t.getLocalizedMessage(),t );
-                showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,
-                        mContext.getResources().getString(R.string.seems_you_lose_the_internet_connection));
-            }
         });
+        
     }
     
     
-    private Call<MovieTrailers> callMovieTrailers(){
-        return mMoviesApi.getMovieTrailers(String.valueOf(mMovieId), BuildConfig.ApiKey);
-    }
+
     
     private List<Result> getResultFromMovieTrailerResponse(Response<MovieTrailers> movieTrailersResponse){
         MovieTrailers movieTrailers = movieTrailersResponse.body();
@@ -236,7 +236,7 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
         if(result != null){
             if (result.getSite().equals(AppConstants.TRAILER_SITE_TYPE)){
                 
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(getYoutubeLink(result.getKey())));
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(Utills.getYoutubeLink(result.getKey())));
                 if (intent.resolveActivity(mContext.getPackageManager())!=null){
                     startActivity(intent);
                 }else{
@@ -250,8 +250,6 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
         
     }
     
-    private String getYoutubeLink(String keyOfVideo){
-        Log.e(TAG, "getYoutubeLink: "+AppConstants.YOUTUBE_LINK.replace("{key_of_video}",keyOfVideo) );
-        return AppConstants.YOUTUBE_LINK.replace("{key_of_video}",keyOfVideo);
-    }
+
+    
 }

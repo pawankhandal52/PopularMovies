@@ -32,12 +32,7 @@ public class NetworkReceiver extends BroadcastReceiver {
             } else {
                 mNetworkListener.connectionUnAvailable();
             }
-            
-        
-        
-            
-            
-    }
+            }
     
     /**
      * This interface have two abstract methods which have tom implement when check the network

@@ -5,13 +5,12 @@
  */
 package com.udacity.androidnanodegree.popularmovies.fragments;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +20,8 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 import com.udacity.androidnanodegree.popularmovies.R;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieDetailsViewModel;
+import com.udacity.androidnanodegree.popularmovies.ViewModels.MovieDetailsViewModelFactory;
 import com.udacity.androidnanodegree.popularmovies.constants.AppConstants;
 import com.udacity.androidnanodegree.popularmovies.database.FavoriteMoviesEntity;
 import com.udacity.androidnanodegree.popularmovies.database.PopularMovieDatabase;
@@ -78,7 +79,6 @@ public class DetailsFragment extends Fragment {
         mUnbinder = ButterKnife.bind(this,view);
         mContext = getActivity();
         mPopularMovieDatabase = PopularMovieDatabase.getInstance(mContext);
-        Log.e(TAG, "onCreateView: Details" );
         setValuesToViews(mBundle);
         return view;
     }
@@ -96,25 +96,22 @@ public class DetailsFragment extends Fragment {
     }
     
     private void setValuesToViews(Bundle bundle) {
-        Log.e(TAG, "setValuesToViews: "+bundle );
         if (bundle != null) {
             if (bundle.containsKey(mContext.getResources().getString(R.string.movie_bundle_key))){
-                Log.e(TAG, "setValuesToViews: 1" );
+                
                 Result result = bundle.getParcelable(mContext.getResources().getString(R.string.movie_bundle_key));
                 setValuesFromMovieResult(result);
             }else if (bundle.containsKey(mContext.getResources().getString(R.string.fav_movie_key))){
-                final int  movieId = bundle.getInt(mContext.getResources().getString(R.string.fav_movie_key));
-                Log.e(TAG, "setValuesToViews: 2" );
-                //Now fetch all details from database
-                //Live data prevent to requery the data from database
-                LiveData<FavoriteMoviesEntity> favoriteMoviesEntity= mPopularMovieDatabase.favoriteMoviesDao().getFavMovieById(movieId);
-                favoriteMoviesEntity.observe(this, new Observer<FavoriteMoviesEntity>() {
+                int  movieId = bundle.getInt(mContext.getResources().getString(R.string.fav_movie_key));
+                //Query all the data from view model get all data from view model
+                MovieDetailsViewModelFactory movieDetailsViewModelFactory = new MovieDetailsViewModelFactory(mPopularMovieDatabase,movieId);
+                MovieDetailsViewModel movieDetailsViewModel = ViewModelProviders.of(this,movieDetailsViewModelFactory).get(MovieDetailsViewModel.class);
+                movieDetailsViewModel.getFavoriteMoviesEntityLiveData().observe(this, new Observer<FavoriteMoviesEntity>() {
                     @Override
                     public void onChanged(@Nullable FavoriteMoviesEntity favoriteMoviesEntity) {
                         setValuesFromFavMovies(favoriteMoviesEntity);
                     }
                 });
-                
                 
             }
             

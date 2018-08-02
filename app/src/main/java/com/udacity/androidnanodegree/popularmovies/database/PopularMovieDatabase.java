@@ -40,11 +40,4 @@ public abstract class PopularMovieDatabase extends RoomDatabase {
     public abstract FavoriteMoviesDao favoriteMoviesDao();
 }
     
-   /* private static final Migration MIGRATION_1_2 = new Migration(1,2) {
-        @Override
-        public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Since we didn't alter the table, there's nothing else to do here.
-            Log.e(TAG, "migrate: happen when schema updated and version updated" );
-        }
-    };
-}*/
+
