@@ -23,7 +23,7 @@ public class DetailsViewPagerAdapter extends FragmentPagerAdapter {
     private final List<String> mStringList = new ArrayList<>();
     
     //Bundle for values
-    private Bundle mBundle;
+    private final Bundle mBundle;
     
     public DetailsViewPagerAdapter(FragmentManager fm,Bundle bundle) {
         super(fm);
@@ -47,6 +47,11 @@ public class DetailsViewPagerAdapter extends FragmentPagerAdapter {
         return mStringList.get(position);
     }
     
+    /**
+     * Add Fragment in a view pager
+     * @param fragment Fragment Object
+     * @param title tab title
+     */
     public void addFragment(Fragment fragment,String title){
         mFragmentsList.add(fragment);
         mStringList.add(title);

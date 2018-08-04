@@ -28,37 +28,34 @@ import butterknife.ButterKnife;
 /**
  * This adapter class is used to provide the reviews to recycler view on Review Screen
  */
-public class MoviesReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class MoviesReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     
-    private Context mContext;
-    private List<Result> mReviewResults;
-    private boolean isLoading =false;
     private final int VIEW_LOADING_ITEM = 0;
     private final int VIEW_ITEM = 1;
+    private Context mContext;
+    private List<Result> mReviewResults;
+    private boolean isLoading = false;
     private Animation mAnimation;
-    private final String TAG = MoviesReviewAdapter.class.getSimpleName();
+    //private final String TAG = MoviesReviewAdapter.class.getSimpleName();
     private ReviewItemClickListner mReviewItemClickListner;
-    public MoviesReviewAdapter(Context context ,ReviewItemClickListner reviewItemClickListner){
+    
+    public MoviesReviewAdapter(Context context, ReviewItemClickListner reviewItemClickListner) {
         this.mContext = context;
-        this.mReviewItemClickListner  = reviewItemClickListner;
+        this.mReviewItemClickListner = reviewItemClickListner;
         mReviewResults = new ArrayList<>();
-        mAnimation = AnimationUtils.loadAnimation(mContext,R.anim.blinking_animation);
+        mAnimation = AnimationUtils.loadAnimation(mContext, R.anim.blinking_animation);
     }
     
-    
-    public interface ReviewItemClickListner{
-        void onItemClickListener(Result result);
-    }
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RecyclerView.ViewHolder viewHolder = null;
         LayoutInflater inflater = LayoutInflater.from(mContext);
-        switch (viewType){
+        switch (viewType) {
             case VIEW_ITEM:
-                viewHolder = new ReviewsHolder(inflater.inflate(R.layout.movie_review_item,parent,false));
+                viewHolder = new ReviewsHolder(inflater.inflate(R.layout.movie_review_item, parent, false));
                 break;
             case VIEW_LOADING_ITEM:
-                viewHolder = new LoadingReviewHolder(inflater.inflate(R.layout.loading_review_item,parent,false));
+                viewHolder = new LoadingReviewHolder(inflater.inflate(R.layout.loading_review_item, parent, false));
                 break;
         }
         return viewHolder;
@@ -66,58 +63,61 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        if (holder instanceof ReviewsHolder){
+        if (holder instanceof ReviewsHolder) {
             final ReviewsHolder reviewsHolder = (ReviewsHolder) holder;
             Result result = mReviewResults.get(position);
-            if (result.getAuthor()!=null){
+            if (result.getAuthor() != null) {
                 reviewsHolder.mAuthorTextView.setText(result.getAuthor());
             }
-            if (result.getContent()!=null){
+            if (result.getContent() != null) {
                 reviewsHolder.mReviewTextView.setText(result.getContent());
             }
             
             reviewsHolder.mViewMoreButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                        reviewsHolder.mReviewTextView.setMaxLines(Integer.MAX_VALUE);
-                        /*reviewsHolder.mViewMoreButton.setText(mContext.getString(R.string.view_less));*/
-                        reviewsHolder.mViewMoreButton.setVisibility(View.GONE);
+                    reviewsHolder.mReviewTextView.setMaxLines(Integer.MAX_VALUE);
+                    /*reviewsHolder.mViewMoreButton.setText(mContext.getString(R.string.view_less));*/
+                    reviewsHolder.mViewMoreButton.setVisibility(View.GONE);
                 }
             });
-        }else if(holder instanceof LoadingReviewHolder){
-            LoadingReviewHolder loadingReviewHolder = (LoadingReviewHolder)holder;
+        } else if (holder instanceof LoadingReviewHolder) {
+            LoadingReviewHolder loadingReviewHolder = (LoadingReviewHolder) holder;
             loadingReviewHolder.mLoadingReviewCardView.setAnimation(mAnimation);
         }
     }
     
     @Override
     public int getItemCount() {
-        return mReviewResults == null?0:mReviewResults.size();
+        return mReviewResults == null ? 0 : mReviewResults.size();
     }
     
-    private Result getItem(int position){
+    private Result getItem(int position) {
         return mReviewResults.get(position);
     }
+    
     @Override
     public int getItemViewType(int position) {
-        return (position == mReviewResults.size()-1 && isLoading)?VIEW_LOADING_ITEM:VIEW_ITEM;
+        return (position == mReviewResults.size() - 1 && isLoading) ? VIEW_LOADING_ITEM : VIEW_ITEM;
     }
     
     /**
      * this method is add result object in collection of result sets
+     *
      * @param result object of result
      */
-    private void addReview(Result result){
+    private void addReview(Result result) {
         mReviewResults.add(result);
-        notifyItemInserted(mReviewResults.size()-1);
+        notifyItemInserted(mReviewResults.size() - 1);
     }
     
     /**
      * This methods is used to get the list of result form activity class
+     *
      * @param results Result object get form API
      */
-    public void addAllReviews(List<Result> results){
-        for (Result result:results) {
+    public void addAllReviews(List<Result> results) {
+        for (Result result : results) {
             addReview(result);
         }
     }
@@ -125,20 +125,20 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     /**
      * This method is used to add the loading item at the end of Recycler view
      */
-    public void addLoadingItem(){
+    public void addLoadingItem() {
         isLoading = true;
         addReview(new Result());
     }
     
     /**
-     * This method is used to remove loading item when data is downloaded form api and reday to show.
+     * This method is used to remove loading item when data is downloaded form api and   show.
      */
-    public void removeLoadingItem(){
+    public void removeLoadingItem() {
         isLoading = false;
-    
+        
         int position = mReviewResults.size() - 1;
         Result result = getItem(position);
-    
+        
         if (result != null) {
             mReviewResults.remove(position);
             notifyItemRemoved(position);
@@ -153,19 +153,27 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         notifyDataSetChanged();
     }
     
-    class ReviewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    /**
+     * For item click in Rv
+     */
+    public interface ReviewItemClickListner {
+        void onItemClickListener(Result result);
+    }
+    
+    class ReviewsHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         @BindView(R.id.review_author_tv)
         TextView mAuthorTextView;
         @BindView(R.id.review_tv)
         TextView mReviewTextView;
         @BindView(R.id.view_more_button)
         Button mViewMoreButton;
+        
         ReviewsHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
             itemView.setOnClickListener(this);
         }
-    
+        
         @Override
         public void onClick(View v) {
             int position = getAdapterPosition();
@@ -173,15 +181,14 @@ public class MoviesReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
     
-    class LoadingReviewHolder extends RecyclerView.ViewHolder{
+    class LoadingReviewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.loading_review_cv)
         CardView mLoadingReviewCardView;
-        public LoadingReviewHolder(View itemView) {
+        
+        LoadingReviewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this,itemView);
+            ButterKnife.bind(this, itemView);
         }
     }
-    
-
     
 }

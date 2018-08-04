@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 2 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies  Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */

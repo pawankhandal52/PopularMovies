@@ -56,10 +56,9 @@ import retrofit2.Response;
 /**
  * This fragment shows Popular movies
  */
-public class PopularMoviesFragment extends Fragment implements MoviesAdapter.MovieItemClickListener{
-    private final String TAG = PopularMoviesFragment.class.getSimpleName();
+public class PopularMoviesFragment extends Fragment implements MoviesAdapter.MovieItemClickListener {
     private static final int PAGE_FIRST = 1;
-    private Unbinder mUnbinder;
+    private final String TAG = PopularMoviesFragment.class.getSimpleName();
     @BindView(R.id.movie_rv)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh)
@@ -74,6 +73,7 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
     TextView mErrorDescTextView;
     @BindView(R.id.swipe_to_refresh_tv)
     TextView mSwipeTextView;
+    private Unbinder mUnbinder;
     private MoviesApi mMoviesApi;
     private boolean isLoading = false;
     private boolean isLastPage = false;
@@ -83,6 +83,7 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
     private MoviesAdapter mMoviesAdapter;
     private NetworkReceiver mNetworkReceiver;
     private Context mContext;
+    
     public PopularMoviesFragment() {
         // Required empty public constructor
     }
@@ -91,22 +92,20 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_popular_movies, container, false);
-        mUnbinder =  ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_popular_movies, container, false);
+        mUnbinder = ButterKnife.bind(this, view);
         mContext = getActivity();
-    
+        
         //Set the adapter and layout manager
         mMoviesAdapter = new MoviesAdapter(mContext, this);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,
                 getResources().getInteger(R.integer.grid_column_count));
-    
+        
         //init the recycler view
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mMoviesAdapter);
-    
-    
-    
+        
         //This is the scrollListener for paging /load more data
         mRecyclerView.addOnScrollListener(new PagingListener(gridLayoutManager) {
             @Override
@@ -120,24 +119,24 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
                     }
                 }, 1000);
             }
-        
+            
             @Override
             public int getTotalPageCount() {
                 return mTotalPages;
             }
-        
+            
             @Override
             public boolean isLastPage() {
                 return isLastPage;
             }
-        
+            
             @Override
             public boolean isLoading() {
                 return isLoading;
             }
         });
-    
-    
+        
+        
         /*
          * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
          * performs a swipe-to-refresh gesture.
@@ -146,44 +145,40 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                    
+                        
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
                         
-                            mMoviesAdapter.removeAllItems();
+                        mMoviesAdapter.removeAllItems();
                         
-                            currentPage = PAGE_FIRST;
-                            loadMovies();
-                       
-                    
+                        currentPage = PAGE_FIRST;
+                        loadMovies();
+                        
                     }
                 }
         );
-    
+        
         mMoviesApi = ConfigApi.getRetrofit().create(MoviesApi.class);
-    
+        
         //This receiver and called every time when network is changed
-    
+        
         mNetworkReceiver = new NetworkReceiver(new NetworkReceiver.NetworkListener() {
             @Override
             public void connectionAvailable() {
                 showData();
                 loadMovies();
-            
-            
-            
+                
             }
-        
+            
             @Override
             public void connectionUnAvailable() {
-                    if (mRecyclerView.getChildCount() == 0) {
-                        showErrorPage();
-                    }
-            
+                if (mRecyclerView.getChildCount() == 0) {
+                    showErrorPage();
+                }
+                
             }
         });
-    
-    
+        
         mContext.registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         return view;
     }
@@ -209,6 +204,7 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
         mProgressBar.setVisibility(View.GONE);
         mErrorConstraintLayout.setVisibility(View.GONE);
     }
+    
     @Override
     public void onMovieItemClick(int clickItemIndex, Result result, View view) {
         Intent intent = new Intent(mContext, MovieDetailsActivity.class);
@@ -218,12 +214,11 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
         startActivity(intent, options.toBundle());
     }
     
-    
-    private void loadMovies(){
+    private void loadMovies() {
         mProgressBar.setVisibility(View.VISIBLE);
         //Check for the null value
-        MoviesViewModelFactory moviesViewModelFactory = new MoviesViewModelFactory(true,currentPage);
-        MoviesViewModel moviesViewModel = ViewModelProviders.of(this,moviesViewModelFactory).get(MoviesViewModel.class);
+        MoviesViewModelFactory moviesViewModelFactory = new MoviesViewModelFactory(true, currentPage);
+        MoviesViewModel moviesViewModel = ViewModelProviders.of(this, moviesViewModelFactory).get(MoviesViewModel.class);
         moviesViewModel.getMoviesResponseLiveData().observe(this, new Observer<Response<Movies>>() {
             @Override
             public void onChanged(@Nullable Response<Movies> moviesResponse) {
@@ -235,7 +230,7 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
                     return;
                 }
                 if (moviesResponse.isSuccessful()) {
-        
+                    
                     List<Result> results = getResultFromResponse(moviesResponse);
                     mTotalPages = getTotalPages(moviesResponse);
                     if (results == null) {
@@ -253,7 +248,7 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
                     }
                 } else {
                     showErrorPage();
-        
+                    
                     switch (moviesResponse.code()) {
                         case 401:
                             mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
@@ -267,18 +262,17 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
                             mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
                             mErrorDescTextView.setText(R.string.unknown_error);
                             break;
-            
+                        
                     }
                 }
             }
         });
         
     }
-
+    
     //This is for load more movies
     private void loadMoreMovies() {
-        Call<Movies> moviesCall= callPopularMoviesApi();
-        
+        Call<Movies> moviesCall = callPopularMoviesApi();
         
         moviesCall.enqueue(new Callback<Movies>() {
             @Override

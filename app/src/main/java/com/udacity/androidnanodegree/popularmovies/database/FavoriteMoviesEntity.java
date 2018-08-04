@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 2 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies  Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
@@ -12,65 +12,35 @@ import android.arch.persistence.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * This is class is used to create a sqlite table to store the user fav movies locally
+ * This is class is used to create a sql lite table to store the user fav movies locally
  */
 @Entity(tableName = "favorite")
 public class FavoriteMoviesEntity {
-    public int getId() {
-        return id;
-    }
-    
-    public void setId(int id) {
-        this.id = id;
-    }
-    
     @PrimaryKey(autoGenerate = true)
     private int id;
-    
     @ColumnInfo(name = "m_id")
     private Integer movieId;
-    
-   
-    
     @ColumnInfo(name = "vote_count")
     private Integer voteCount;
-    
-    
-    
     @SerializedName("vote_average")
     @ColumnInfo(name = "vote_average")
     private Double voteAverage;
-    
     @ColumnInfo(name = "title")
     private String title;
-    
-    
     @ColumnInfo(name = "popularity")
     private Double popularity;
-    
-    
     @ColumnInfo(name = "poster_path")
     private String posterPath;
-    
-    
     @ColumnInfo(name = "original_language")
     private String originalLanguage;
-    
-
     @ColumnInfo(name = "original_title")
     private String originalTitle;
-    
-    
     @ColumnInfo(name = "backdrop_path")
     private String backdropPath;
-    
-   
     @ColumnInfo(name = "adult")
     private Boolean adult;
-    
     @ColumnInfo(name = "overview")
     private String overview;
-    
     @ColumnInfo(name = "release_date")
     private String releaseDate;
     
@@ -87,6 +57,14 @@ public class FavoriteMoviesEntity {
         this.adult = adult;
         this.overview = overview;
         this.releaseDate = releaseDate;
+    }
+    
+    public int getId() {
+        return id;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
     
     public Integer getMovieId() {

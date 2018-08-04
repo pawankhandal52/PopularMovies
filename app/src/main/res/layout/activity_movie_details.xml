@@ -57,7 +57,7 @@
             <android.support.design.widget.TabLayout
                 android:id="@+id/details_tab_layout"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="@dimen/tab_height"
                 android:layout_gravity="bottom"
                 android:background="@android:color/transparent"
                 android:theme="@style/Base.Widget.Design.TabLayout"

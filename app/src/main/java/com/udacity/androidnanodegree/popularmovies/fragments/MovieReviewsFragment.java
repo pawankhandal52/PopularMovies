@@ -56,25 +56,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapter.ReviewItemClickListner{
+public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapter.ReviewItemClickListner {
     
-    //Unbinder to unbind views when fragment is detach
-    private Unbinder mUnbinder;
     private static final int PAGE_FIRST = 1;
     private final String TAG = MovieReviewsFragment.class.getSimpleName();
-    
-    private MoviesReviewAdapter mMoviesReviewAdapter;
-    private Context mContext;
-    
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
-    private int mTotalPages = 0;
-    private int currentPage = PAGE_FIRST;
-    private MoviesApi mMoviesApi;
-    private Integer mMovieId;
-    private NetworkReceiver mNetworkReceiver;
-    private Bundle mBundle;
-    
     //Ui Items from layout
     @BindView(R.id.reviews_rv)
     RecyclerView mReviewsRecyclerView;
@@ -90,6 +75,18 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
     TextView mErrorDescTextView;
     @BindView(R.id.swipe_to_refresh_tv)
     TextView mSwipeTextView;
+    //Unbinder to unbind views when fragment is detach
+    private Unbinder mUnbinder;
+    private MoviesReviewAdapter mMoviesReviewAdapter;
+    private Context mContext;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private int mTotalPages = 0;
+    private int mCurrentPage = PAGE_FIRST;
+    private Integer mMovieId;
+    private NetworkReceiver mNetworkReceiver;
+    private Bundle mBundle;
+    
     public MovieReviewsFragment() {
         
         // Required empty public constructor
@@ -99,7 +96,7 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBundle = getArguments();
-       Log.e(TAG, "onCreate: ");
+        Log.e(TAG, "onCreate: ");
     }
     
     @Override
@@ -107,44 +104,41 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_movie_reviews, container, false);
-        mUnbinder = ButterKnife.bind(this,view);
-        
+        mUnbinder = ButterKnife.bind(this, view);
         
         //Get the Movie id from bundle pass by the activity
         mContext = getActivity();
-    
-        //Log.e(TAG, "onCreateView: " );
         //Check bundle have a which key
-        if (mBundle.containsKey(mContext.getResources().getString(R.string.movie_bundle_key))){
+        if (mBundle.containsKey(mContext.getResources().getString(R.string.movie_bundle_key))) {
             com.udacity.androidnanodegree.popularmovies.models.movies.Result result = mBundle.getParcelable(mContext.getString(R.string.movie_bundle_key));
             if (result != null) {
                 mMovieId = result.getId();
-            }else{
-                Toast.makeText(mContext,getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
                 getActivity().finish();
             }
-        }else if (mBundle.containsKey(mContext.getResources().getString(R.string.fav_movie_key))){
+        } else if (mBundle.containsKey(mContext.getResources().getString(R.string.fav_movie_key))) {
             mMovieId = mBundle.getInt(mContext.getResources().getString(R.string.fav_movie_key));
-           
-        }else{
-            Toast.makeText(mContext,getString(R.string.unknown_error),Toast.LENGTH_SHORT).show();
+            
+        } else {
+            Toast.makeText(mContext, getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
         
         //Set the adapter and Recycler view
-        mMoviesReviewAdapter = new MoviesReviewAdapter(getActivity(),this);
+        mMoviesReviewAdapter = new MoviesReviewAdapter(getActivity(), this);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
         mReviewsRecyclerView.setLayoutManager(linearLayoutManager);
         mReviewsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mReviewsRecyclerView.setAdapter(mMoviesReviewAdapter);
-    
+        
         //Log.e(TAG, "onCreateView: " );
         //Add lisner fo on scroll listner
         mReviewsRecyclerView.addOnScrollListener(new PagingListener(linearLayoutManager) {
             @Override
             protected void loadMoreItems() {
                 isLoading = true;
-                currentPage +=1;
+                mCurrentPage += 1;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -152,205 +146,141 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
                         loadMoreMoviesReviews();
                         
                     }
-                },1000);
+                }, 1000);
             }
-    
+            
             @Override
             protected int getTotalPageCount() {
                 return mTotalPages;
             }
-    
+            
             @Override
             protected boolean isLastPage() {
                 return isLastPage;
             }
-    
+            
             @Override
             protected boolean isLoading() {
                 return isLoading;
             }
         });
-    
-        //Initialize movie api
-        mMoviesApi = ConfigApi.getRetrofit().create(MoviesApi.class);
-    
-       
         
         //Swipe to refresh layour
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mMoviesReviewAdapter.removeAllItems();
-                currentPage = PAGE_FIRST;
+                mCurrentPage = PAGE_FIRST;
                 showData();
                 loadMovieReviews();
             }
         });
-    
+        
         mNetworkReceiver = new NetworkReceiver(new NetworkReceiver.NetworkListener() {
             @Override
             public void connectionAvailable() {
-                   showData();
-                   loadMovieReviews();
-               
+                showData();
+                loadMovieReviews();
+                
             }
-        
+            
             @Override
             public void connectionUnAvailable() {
                 if (mReviewsRecyclerView.getChildCount() == 0) {
-                    showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,getString(R.string.seems_you_lose_the_internet_connection));
-    
+                    showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp, getString(R.string.seems_you_lose_the_internet_connection));
+                    
                 }
             }
         });
-    
-    
+        
         mContext.registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         return view;
     }
     
-  
-    private void loadMovieReviews(){
+    /**
+     * Load Movies From Repo
+     */
+    private void loadMovieReviews() {
         mProgressBar.setVisibility(View.VISIBLE);
-        MovieReviewsViewModelFactory movieReviewsViewModelFactory = new MovieReviewsViewModelFactory(String.valueOf(mMovieId),currentPage);
-        MovieReviewsViewModel movieReviewsViewModel = ViewModelProviders.of(this,movieReviewsViewModelFactory).get(MovieReviewsViewModel.class);
+        MovieReviewsViewModelFactory movieReviewsViewModelFactory = new MovieReviewsViewModelFactory(String.valueOf(mMovieId), mCurrentPage);
+        MovieReviewsViewModel movieReviewsViewModel = ViewModelProviders.of(this, movieReviewsViewModelFactory).get(MovieReviewsViewModel.class);
         movieReviewsViewModel.getMovieReviewsResponseLiveData().observe(this, new Observer<Response<MovieReviews>>() {
             @Override
             public void onChanged(@Nullable Response<MovieReviews> movieReviewsResponse) {
                 mSwipeRefreshLayout.setRefreshing(false);
-                if (movieReviewsResponse == null){
-                    showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,getString(R.string.seems_you_lose_the_internet_connection));
+                if (movieReviewsResponse == null) {
+                    showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp, getString(R.string.seems_you_lose_the_internet_connection));
                     return;
                 }
-                if (movieReviewsResponse.isSuccessful()){
+                if (movieReviewsResponse.isSuccessful()) {
                     List<Result> results = getResultFromMovieReviewResponse(movieReviewsResponse);
-                    if (results != null){
-                        if (results.size() != 0){
+                    if (results != null) {
+                        if (results.size() != 0) {
                             showData();
                             mTotalPages = getTotalPages(movieReviewsResponse);
                             mMoviesReviewAdapter.addAllReviews(results);
-                            if (currentPage < mTotalPages) {
+                            if (mCurrentPage < mTotalPages) {
                                 mMoviesReviewAdapter.addLoadingItem();
-                                // Log.e(TAG, "onResponse: "+currentPage +", total" );
+                                // Log.e(TAG, "onResponse: "+mCurrentPage +", total" );
                             } else {
                                 isLastPage = true;
                             }
-                        }else{
+                        } else {
                             showErrorPage(R.drawable.ic_stars_black_24dp,
                                     getString(R.string.no_reviews));
                         }
-            
-                    }else{
+                        
+                    } else {
                         showErrorPage(R.mipmap.ic_launcher_round,
                                 getString(R.string.something_went_wrong));
                     }
-        
-        
-                }else{
+                    
+                } else {
                     switch (movieReviewsResponse.code()) {
                         case 401:
                             Log.e(TAG, " Invalid API key: You must be granted a valid key.");
-                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_401));
+                            showErrorPage(R.mipmap.ic_launcher_round, getString(R.string.error_401));
                             break;
                         case 404:
-                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_404));
+                            showErrorPage(R.mipmap.ic_launcher_round, getString(R.string.error_404));
                             Log.e(TAG, " The resource you requested could not be found.");
                             break;
                         default:
                             Log.e(TAG, " Unknown Error Try Again!!");
-                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.unknown_error));
+                            showErrorPage(R.mipmap.ic_launcher_round, getString(R.string.unknown_error));
                             break;
-            
+                        
                     }
                 }
             }
         });
     }
-
     
-/*    private void loadMovieReviews(){
-        mProgressBar.setVisibility(View.VISIBLE);
-        callMoviesReview().enqueue(new Callback<MovieReviews>(){
-    
-            @Override
-            public void onResponse(@NonNull Call<MovieReviews> call, @NonNull Response<MovieReviews> response) {
-                //First remove the loading footer
-               // Log.e(TAG, "onResponse: "+response.raw().request().url() );
-                mSwipeRefreshLayout.setRefreshing(false);
-                if (response.isSuccessful()){
-                    List<Result> results = getResultFromMovieReviewResponse(response);
-                    if (results != null){
-                        if (results.size() != 0){
-                            showData();
-                            mTotalPages = getTotalPages(response);
-                            mMoviesReviewAdapter.addAllReviews(results);
-                            if (currentPage < mTotalPages) {
-                                mMoviesReviewAdapter.addLoadingItem();
-                               // Log.e(TAG, "onResponse: "+currentPage +", total" );
-                            } else {
-                                isLastPage = true;
-                            }
-                        }else{
-                            showErrorPage(R.drawable.ic_stars_black_24dp,
-                                    getString(R.string.no_reviews));
-                        }
-                        
-                    }else{
-                        showErrorPage(R.mipmap.ic_launcher_round,
-                                getString(R.string.something_went_wrong));
-                    }
-                    
-                    
-                }else{
-                    switch (response.code()) {
-                        case 401:
-                            Log.e(TAG, " Invalid API key: You must be granted a valid key.");
-                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_401));
-                            break;
-                        case 404:
-                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.error_404));
-                            Log.e(TAG, " The resource you requested could not be found.");
-                            break;
-                        default:
-                            Log.e(TAG, " Unknown Error Try Again!!");
-                            showErrorPage(R.mipmap.ic_launcher_round,getString(R.string.unknown_error));
-                            break;
-        
-                    }
-                }
-            }
-    
-            @Override
-            public void onFailure(@NonNull Call<MovieReviews> call, @NonNull Throwable t) {
-                //Log.e(TAG, "onFailure: " + t.getLocalizedMessage());
-                Toast.makeText(mContext, getString(R.string.seems_you_lose_the_internet_connection), Toast.LENGTH_SHORT).show();
-                showErrorPage(R.drawable.ic_signal_wifi_off_red_24dp,getString(R.string.seems_you_lose_the_internet_connection));
-            }
-        });
-    }*/
-    
-    private void loadMoreMoviesReviews(){
-        callMoviesReview().enqueue(new Callback<MovieReviews>(){
-        
+    /**
+     * Loa more Movies
+     */
+    private void loadMoreMoviesReviews() {
+        callMoviesReview().enqueue(new Callback<MovieReviews>() {
+            
             @Override
             public void onResponse(@NonNull Call<MovieReviews> call, @NonNull Response<MovieReviews> response) {
                 //First remove the loading footer
                 mMoviesReviewAdapter.removeLoadingItem();
                 isLoading = false;
-                //Log.e(TAG, "onResponse: load more"+currentPage );
+                //Log.e(TAG, "onResponse: load more"+mCurrentPage );
                 //Log.e(TAG, "onResponse: load more"+response.raw().request().url() );
                 mSwipeRefreshLayout.setRefreshing(false);
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     List<Result> results = getResultFromMovieReviewResponse(response);
                     mTotalPages = getTotalPages(response);
                     mMoviesReviewAdapter.addAllReviews(results);
-                    if (currentPage < mTotalPages) {
+                    if (mCurrentPage < mTotalPages) {
                         mMoviesReviewAdapter.addLoadingItem();
                     } else {
                         isLastPage = true;
                     }
-                
-                }else{
+                    
+                } else {
                     switch (response.code()) {
                         case 401:
                             Log.e(TAG, " Invalid API key: You must be granted a valid key.");
@@ -361,35 +291,37 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
                         default:
                             Log.e(TAG, " Unknown Error Try Again!!");
                             break;
-                    
+                        
                     }
                 }
             }
-        
+            
             @Override
             public void onFailure(@NonNull Call<MovieReviews> call, @NonNull Throwable t) {
                 Log.e(TAG, "onFailure: " + t.getLocalizedMessage());
                 Toast.makeText(mContext, getString(R.string.seems_you_lose_the_internet_connection), Toast.LENGTH_SHORT).show();
-            
+                
             }
         });
     }
-    private int getTotalPages(Response<MovieReviews> movieReviewsResponse){
+    
+    private int getTotalPages(Response<MovieReviews> movieReviewsResponse) {
         MovieReviews movieReviews = movieReviewsResponse.body();
-        if (movieReviews!=null){
+        if (movieReviews != null) {
             return movieReviews.getTotalPages();
         }
         return 0;
     }
     
-    private Call<MovieReviews> callMoviesReview(){
-        return ConfigApi.getRetrofit().create(MoviesApi.class).getMovieReviews(String.valueOf(mMovieId), BuildConfig.ApiKey,currentPage);
+    private Call<MovieReviews> callMoviesReview() {
+        return ConfigApi.getRetrofit().create(MoviesApi.class).getMovieReviews(String.valueOf(mMovieId), BuildConfig.ApiKey, mCurrentPage);
     }
     
-    private List<Result>  getResultFromMovieReviewResponse(Response<MovieReviews> movieReviewsResponse){
+    private List<Result> getResultFromMovieReviewResponse(Response<MovieReviews> movieReviewsResponse) {
         MovieReviews movieReviews = movieReviewsResponse.body();
         return movieReviews != null ? movieReviews.getResults() : null;
     }
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -397,21 +329,26 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
         //Log.e(TAG, "onDestroy: " );
     }
     
-   private void showErrorPage(int resourceId, String text){
+    /**
+     * Show Error On Screen
+     *
+     * @param resourceId Id which you want to show or hide
+     * @param text       Title
+     */
+    private void showErrorPage(int resourceId, String text) {
         mProgressBar.setVisibility(View.GONE);
         mErrorConstraintLayout.setVisibility(View.VISIBLE);
         mNoInternetView.setBackgroundResource(resourceId);
         mErrorDescTextView.setText(text);
-   }
-   
-   private void showData(){
+    }
+    
+    /**
+     * Show data when no error found
+     */
+    private void showData() {
         mProgressBar.setVisibility(View.GONE);
         mErrorConstraintLayout.setVisibility(View.GONE);
-   }
-    
-
-    
-   
+    }
     
     @Override
     public void onDestroyView() {
@@ -421,19 +358,19 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
     
     @Override
     public void onItemClickListener(Result result) {
-        if (result!= null){
-            if (result.getUrl()!=null){
+        if (result != null) {
+            if (result.getUrl() != null) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(result.getUrl()));
-                if (intent.resolveActivity(mContext.getPackageManager())!=null){
+                if (intent.resolveActivity(mContext.getPackageManager()) != null) {
                     startActivity(intent);
-                }else{
-                    Toast.makeText(mContext,getResources().getString( R.string.no_app_found_to_view), Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mContext, getResources().getString(R.string.no_app_found_to_view), Toast.LENGTH_SHORT).show();
                 }
-            }else{
-                Toast.makeText(mContext,getResources().getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mContext, getResources().getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
             }
             
-        }else{
+        } else {
             Toast.makeText(mContext, getResources().getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
         }
         

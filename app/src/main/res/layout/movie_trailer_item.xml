@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            tools:text="@string/tariler_name"
+            tools:text="@string/trailer_name"
             android:textColor="@color/colorHomeBackground"
             android:layout_marginBottom="10dp"
             android:layout_marginStart="10dp"/>

@@ -23,6 +23,7 @@ public class MovieDetailsViewModelFactory extends ViewModelProvider.NewInstanceF
         this.movieId = movieId;
     }
     
+    @SuppressWarnings("unchecked")
     @NonNull
     @Override
     public <T extends ViewModel> T create(@NonNull Class<T> modelClass) {

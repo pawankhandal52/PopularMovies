@@ -13,7 +13,7 @@ import android.support.annotation.NonNull;
  * This the Factory class which is used to pass the data from Activity to Registry Via View Model
  */
 public class MovieTrailerViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-    String mMovieId;
+    private String mMovieId;
     
     public MovieTrailerViewModelFactory(String movieId) {
         mMovieId = movieId;

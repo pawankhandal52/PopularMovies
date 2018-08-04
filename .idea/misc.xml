@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
+    <entry_points version="2.0">
+      <entry_point TYPE="method" FQNAME="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity$5 void run()" />
+      <entry_point TYPE="field" FQNAME="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity mMenu" />
+      <entry_point TYPE="field" FQNAME="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity mPopularMovieDatabase" />
+      <entry_point TYPE="field" FQNAME="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity mIsFav" />
+    </entry_points>
     <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setResults" />
     <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setTotalPages" />
     <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="setTotalResults" />
@@ -9,6 +15,11 @@
     <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" method="getPage" />
     <pattern value="com.udacity.androidnanodegree.popularmovies.models.Movies" />
     <pattern value="com.udacity.androidnanodegree.popularmovies.models.Result" method="setVoteCount" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity" method="removeMovieFromDatabase" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity" method="onCreate" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity" method="onCreateOptionsMenu" />
+    <pattern value="com.udacity.androidnanodegree.popularmovies.activity.MovieDetailsActivity" method="onOptionsItemSelected" />
   </component>
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="android.support.annotation.Nullable" />
@@ -35,7 +46,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" default="true" project-jdk-name="1.8 (1)" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8 (1)" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">

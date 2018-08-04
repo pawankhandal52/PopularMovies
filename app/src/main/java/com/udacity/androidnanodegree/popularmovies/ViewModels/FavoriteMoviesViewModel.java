@@ -23,13 +23,15 @@ public class FavoriteMoviesViewModel extends AndroidViewModel {
     
     private final String TAG = FavoriteMoviesViewModel.class.getSimpleName();
     private LiveData<List<FavoriteMoviesEntity>> mFavoriteMoviesListLiveData;
+    
     public FavoriteMoviesViewModel(@NonNull Application application) {
         super(application);
         PopularMovieDatabase popularMovieDatabase = PopularMovieDatabase.getInstance(this.getApplication());
         Log.d(TAG, "FavoriteMoviesViewModel: Actively retrieving the movies from the DataBase");
         mFavoriteMoviesListLiveData = popularMovieDatabase.favoriteMoviesDao().getAllFavoritesMovies();
     }
-    public LiveData<List<FavoriteMoviesEntity>> getFavoriteMoviesListLiveData(){
+    
+    public LiveData<List<FavoriteMoviesEntity>> getFavoriteMoviesListLiveData() {
         return mFavoriteMoviesListLiveData;
     }
 }

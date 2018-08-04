@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
@@ -41,11 +41,9 @@ import butterknife.Unbinder;
 /**
  * This fragment shows the user favorite movies
  */
-public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAdapter.FavMovieItemClickListner{
-    
+public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAdapter.FavMovieItemClickListner {
     
     private static final String TAG = FavoriteMovieFragment.class.getSimpleName();
-    private Unbinder mUnbinder;
     @BindView(R.id.movie_rv)
     RecyclerView mRecyclerView;
     @BindView(R.id.swipe_refresh)
@@ -60,11 +58,12 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
     TextView mErrorDescTextView;
     @BindView(R.id.swipe_to_refresh_tv)
     TextView mSwipeTextView;
+    private Unbinder mUnbinder;
     private FavoriteMoviesAdapter mFavoriteMoviesAdapter;
-    
     
     //Database instance to get fav movies of user
     private Context mContext;
+    
     public FavoriteMovieFragment() {
         // Required empty public constructor
     }
@@ -73,23 +72,22 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_favorite_movie, container, false);
-        mUnbinder =  ButterKnife.bind(this,view);
+        View view = inflater.inflate(R.layout.fragment_favorite_movie, container, false);
+        mUnbinder = ButterKnife.bind(this, view);
         mContext = getActivity();
-    
+        
         GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,
                 getResources().getInteger(R.integer.grid_column_count));
-    
+        
         //set the adapter
-        mFavoriteMoviesAdapter  = new FavoriteMoviesAdapter(mContext,this);
-    
-    
+        mFavoriteMoviesAdapter = new FavoriteMoviesAdapter(mContext, this);
+        
         //init the recycler view
         mRecyclerView.setLayoutManager(gridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mFavoriteMoviesAdapter);
-    
-    
+        
+        
         /*
          * Sets up a SwipeRefreshLayout.OnRefreshListener that is invoked when the user
          * performs a swipe-to-refresh gesture.
@@ -98,14 +96,13 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                    
+                        
                         // This method performs the actual data-refresh operation.
                         // The method calls setRefreshing(false) when it's finished.
                         
-                            mFavoriteMoviesAdapter.removeAllItems();
-                            getUserFavMovieFromDatabase();
+                        mFavoriteMoviesAdapter.removeAllItems();
+                        getUserFavMovieFromDatabase();
                         
-                    
                     }
                 }
         );
@@ -116,9 +113,7 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
     @Override
     public void onItemClick(FavoriteMoviesEntity favoriteMoviesEntity, View view) {
         Intent intent = new Intent(mContext, MovieDetailsActivity.class);
-        // Log.e(TAG, "onItemClick: Fav" );
-        //intent.putExtra(getString(R.string.movie_bundle_key), );
-        intent.putExtra(getString(R.string.fav_movie_key),favoriteMoviesEntity.getMovieId());
+        intent.putExtra(getString(R.string.fav_movie_key), favoriteMoviesEntity.getMovieId());
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(getActivity(), view, getString(R.string.poster_image_transition));
         startActivity(intent, options.toBundle());
@@ -126,9 +121,8 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
     
     private void getUserFavMovieFromDatabase() {
         
-        
         mProgressBar.setVisibility(View.GONE);
-    
+        
         FavoriteMoviesViewModel favoriteMoviesViewModel = ViewModelProviders.of(this).get(FavoriteMoviesViewModel.class);
         favoriteMoviesViewModel.getFavoriteMoviesListLiveData().observe(this, new Observer<List<FavoriteMoviesEntity>>() {
             @Override
@@ -136,11 +130,11 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
                 Log.d(TAG, "Updating data from view model");
                 if (favoriteMoviesEntities != null) {
                     mFavoriteMoviesAdapter.removeAllItems();
-                    if (favoriteMoviesEntities.size()==0){
+                    if (favoriteMoviesEntities.size() == 0) {
                         mNoInternetView.setBackgroundResource(R.mipmap.ic_launcher_round);
                         mErrorDescTextView.setText(R.string.no_fav_movies);
                         showErrorPage();
-                    }else{
+                    } else {
                         showData();
                         mFavoriteMoviesAdapter.addAllFavMovie(favoriteMoviesEntities);
                     }
@@ -149,7 +143,6 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
         });
         mSwipeRefreshLayout.setRefreshing(false);
         
-        
     }
     
     @Override
@@ -157,6 +150,7 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
         super.onDestroy();
         mUnbinder.unbind();
     }
+    
     private void showErrorPage() {
         mProgressBar.setVisibility(View.GONE);
         mErrorConstraintLayout.setVisibility(View.VISIBLE);

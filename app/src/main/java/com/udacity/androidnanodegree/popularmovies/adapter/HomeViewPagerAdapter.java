@@ -36,7 +36,17 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
         return mFragmentsList.size();
     }
     
-    public void addFragment(Fragment fragment,String title){
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return mStringList.get(position);
+    }
+    
+    /**
+     * Add Fragment from parent activity in ViewPager
+     * @param fragment Object
+     * @param title String
+     */
+    public void addFragment(Fragment fragment, String title){
         mFragmentsList.add(fragment);
         mStringList.add(title);
     }

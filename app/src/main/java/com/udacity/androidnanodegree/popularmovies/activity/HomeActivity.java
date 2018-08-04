@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
  * This is home activity which shows popular movies, Top Rated Movie and User favorites movie in Child fragment
  */
 public class HomeActivity extends AppCompatActivity {
+    //Ui Views
     @BindView(R.id.home_tab_layout)
     TabLayout mTabLayout;
     @BindView(R.id.home_view_pager)
@@ -37,50 +38,32 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         ButterKnife.bind(this);
-    
-    
+        
         //Set the view page and tabs
         setUpViewPager(mViewPager);
         mTabLayout.setupWithViewPager(mViewPager);
         setTabIcon();
-    
+        
         //Call setValuesToViews function to show the data send by previous activity.
         //setValuesToViews(bundle);
         mViewPager.setOffscreenPageLimit(3);
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            
-            }
         
-            @Override
-            public void onPageSelected(int position) {
-                //Log.e(TAG, "onPageSelected: "+position );
-            }
-        
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            
-            }
-        });
-        
-        if (!Utills.isConnectionAvailable(this)){
-            //Objects.requireNonNull(mTabLayout.getTabAt(3)).select();
+        if (!Utills.isConnectionAvailable(this)) {
             mViewPager.setCurrentItem(3);
         }
     }
     
     //Setup view pager with tabs fragment
-    private void setUpViewPager(ViewPager viewPager){
+    private void setUpViewPager(ViewPager viewPager) {
         HomeViewPagerAdapter homeViewPagerAdapter = new HomeViewPagerAdapter(getSupportFragmentManager());
-        homeViewPagerAdapter.addFragment(new PopularMoviesFragment(),getString(R.string.popular));
-        homeViewPagerAdapter.addFragment(new TopRatedFragment(),getString(R.string.top_rated));
-        homeViewPagerAdapter.addFragment(new FavoriteMovieFragment(),getString(R.string.favorite));
+        homeViewPagerAdapter.addFragment(new PopularMoviesFragment(), getString(R.string.popular));
+        homeViewPagerAdapter.addFragment(new TopRatedFragment(), getString(R.string.top_rated));
+        homeViewPagerAdapter.addFragment(new FavoriteMovieFragment(), getString(R.string.favorite));
         viewPager.setAdapter(homeViewPagerAdapter);
     }
     
     //This is used to set the icon and text of tabs
-    private void setTabIcon(){
+    private void setTabIcon() {
         Objects.requireNonNull(mTabLayout.getTabAt(0)).setIcon(R.drawable.ic_thumb_up_black_24dp);
         Objects.requireNonNull(mTabLayout.getTabAt(1)).setIcon(R.drawable.ic_star_black_24dp);
         Objects.requireNonNull(mTabLayout.getTabAt(2)).setIcon(R.drawable.ic_favorite_red_32dp);

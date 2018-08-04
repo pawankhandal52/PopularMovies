@@ -79,7 +79,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
     private boolean isLoading = false;
     private boolean isLastPage = false;
     private int mTotalPages = 0;
-    private int currentPage = PAGE_FIRST;
+    private int mCurrentPage = PAGE_FIRST;
     
     private MoviesAdapter mMoviesAdapter;
     private NetworkReceiver mNetworkReceiver;
@@ -114,7 +114,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
             @Override
             public void loadMoreItems() {
                 isLoading = true;
-                currentPage += 1;
+                mCurrentPage += 1;
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -154,7 +154,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
                     
                         mMoviesAdapter.removeAllItems();
                     
-                        currentPage = PAGE_FIRST;
+                        mCurrentPage = PAGE_FIRST;
                         loadMovies();
                     
                     
@@ -223,7 +223,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
     private void loadMovies(){
         mProgressBar.setVisibility(View.VISIBLE);
         //Check for the null value
-        MoviesViewModelFactory moviesViewModelFactory = new MoviesViewModelFactory(false,currentPage);
+        MoviesViewModelFactory moviesViewModelFactory = new MoviesViewModelFactory(false, mCurrentPage);
         MoviesViewModel moviesViewModel = ViewModelProviders.of(this,moviesViewModelFactory).get(MoviesViewModel.class);
         moviesViewModel.getMoviesResponseLiveData().observe(this, new Observer<Response<Movies>>() {
             @Override
@@ -246,7 +246,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
                         showData();
                     }
                     mMoviesAdapter.addAll(results);
-                    if (currentPage <= mTotalPages) {
+                    if (mCurrentPage <= mTotalPages) {
                         mMoviesAdapter.addLoadingFooter();
                     } else {
                         isLastPage = true;
@@ -292,7 +292,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
                     mTotalPages = getTotalPages(response);
                     mMoviesAdapter.addAll(results);
                     
-                    if (currentPage <= mTotalPages) {
+                    if (mCurrentPage <= mTotalPages) {
                         mMoviesAdapter.addLoadingFooter();
                     } else {
                         isLastPage = true;
@@ -324,7 +324,7 @@ public class TopRatedFragment extends Fragment implements MoviesAdapter.MovieIte
     }
     
     private Call<Movies> callTopRatedMoviesApi() {
-        return mMoviesApi.getTopRatedMovies(BuildConfig.ApiKey, currentPage);
+        return mMoviesApi.getTopRatedMovies(BuildConfig.ApiKey, mCurrentPage);
     }
     
     private List<Result> getResultFromResponse(Response<Movies> moviesResponse) {

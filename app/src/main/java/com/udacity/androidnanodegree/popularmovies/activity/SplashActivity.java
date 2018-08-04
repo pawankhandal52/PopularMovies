@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
@@ -57,6 +57,9 @@ public class SplashActivity extends AppCompatActivity {
         }, SPLASH_DELAYS_TIME_IN_MS);
     }
     
+    /**
+     * to set the animation on a title and subtitle
+     */
     private void setAnimation() {
         final long TEXT_ANIMATION_TIME_DURATION = 1000;
         ObjectAnimator scaleXAnimation = ObjectAnimator.ofFloat(mExtraTextView, getString(R.string.scaleX), 5.0F, 1.0F);

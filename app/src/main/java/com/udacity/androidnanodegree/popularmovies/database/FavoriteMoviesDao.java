@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 2 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies  Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
@@ -7,19 +7,18 @@ package com.udacity.androidnanodegree.popularmovies.database;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
 
 import java.util.List;
 
 /**
- * This is interface is used to perform CURD on a Sqlite using Room
+ * This is interface is used to perform CURD on a Sql lite using Room
  */
 @Dao
 public interface FavoriteMoviesDao {
+    
+    
     //Query to read all the user Favorite movies.
     @Query("SELECT * FROM favorite ORDER BY release_date")
     LiveData<List<FavoriteMoviesEntity>> getAllFavoritesMovies();
@@ -35,15 +34,19 @@ public interface FavoriteMoviesDao {
     void insertFavoriteMovie(FavoriteMoviesEntity favoriteMoviesEntity);
     
     
-    //Update the movie
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    void updateFavoriteMovie(FavoriteMoviesEntity favoriteMoviesEntity);
-    
-    //Delete
-    @Delete
-    void deleteFavoriteMovie(FavoriteMoviesEntity favoriteMoviesEntity);
+// --Commented out by Inspection START (8/2/18, 5:19 PM):
+//    //Update the movie
+//    @Update(onConflict = OnConflictStrategy.REPLACE)
+//    void updateFavoriteMovie(FavoriteMoviesEntity favoriteMoviesEntity);
+// --Commented out by Inspection STOP (8/2/18, 5:19 PM)
+
+// --Commented out by Inspection START (8/2/18, 5:19 PM):
+//    //Delete
+//    @Delete
+//    void deleteFavoriteMovie(FavoriteMoviesEntity favoriteMoviesEntity);
+// --Commented out by Inspection STOP (8/2/18, 5:19 PM)
     
     @Query("DELETE FROM favorite WHERE m_id = :m_id")
-    int deleteFavMovieById(int m_id);
+    void deleteFavMovieById(int m_id);
     
 }

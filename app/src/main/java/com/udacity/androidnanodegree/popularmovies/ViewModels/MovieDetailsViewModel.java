@@ -13,16 +13,16 @@ import com.udacity.androidnanodegree.popularmovies.database.FavoriteMoviesEntity
 import com.udacity.androidnanodegree.popularmovies.database.PopularMovieDatabase;
 
 /**
- *This is ViewModel class to get the Movie by its id
+ * This is ViewModel class to get the Movie by its id
  */
 public class MovieDetailsViewModel extends ViewModel {
     
     private final String TAG = MovieDetailsViewModel.class.getSimpleName();
     private LiveData<FavoriteMoviesEntity> mFavoriteMoviesEntityLiveData;
     
-    public MovieDetailsViewModel(PopularMovieDatabase movieDatabase, int movieId){
-        mFavoriteMoviesEntityLiveData =  movieDatabase.favoriteMoviesDao().getFavMovieById(movieId);
-        Log.d(TAG, "Retriving movie by its id from database ");
+    public MovieDetailsViewModel(PopularMovieDatabase movieDatabase, int movieId) {
+        mFavoriteMoviesEntityLiveData = movieDatabase.favoriteMoviesDao().getFavMovieById(movieId);
+        Log.d(TAG, "recive movie by its id from database ");
     }
     
     public LiveData<FavoriteMoviesEntity> getFavoriteMoviesEntityLiveData() {

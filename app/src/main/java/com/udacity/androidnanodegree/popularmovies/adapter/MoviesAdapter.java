@@ -37,7 +37,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private final List<Result> mResults;
     private final Animation mAnimation;
     final private MovieItemClickListener mMovieItemClickListener;
-    private final String TAG = MoviesAdapter.class.getSimpleName();
+    // --Commented out by Inspection (8/2/18, 5:10 PM):private final String TAG = MoviesAdapter.class.getSimpleName();
     private boolean isLoading = false;
     
     public MoviesAdapter(Context context, MovieItemClickListener movieItemClickListener) {
