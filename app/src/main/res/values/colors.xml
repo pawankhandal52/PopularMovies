@@ -8,4 +8,6 @@
     <color name="colorBlack">#000000</color>
     <color name="colorText">#666464</color>
     <color name="colorRed">#d61919</color>
+    <color name="colorPlaceHolder">#dad9d9</color>
+    <color name="colorCardBorder">#737272</color>
 </resources>

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2018 The Android Popular Movies Stage 1 Project made under Udacity Nanodegree Course
+ * Copyright (C) 2018 The Android Popular Movies Project made under Udacity Nanodegree Course
  * Author Pawan Kumar Sharma
  * All Rights Reserved
  */
@@ -18,10 +18,11 @@ public class ConfigApi {
     
     /**
      * This method is used to get the Retrofit build object.
+     *
      * @return Retrofit object after building.
      */
-    public static Retrofit getRetrofit(){
-        if (sRetrofit == null){
+    public static Retrofit getRetrofit() {
+        if (sRetrofit == null) {
             sRetrofit = new Retrofit.Builder()
                     .addConverterFactory(GsonConverterFactory.create())
                     .baseUrl(AppConstants.BASE_URL)
@@ -29,6 +30,5 @@ public class ConfigApi {
         }
         return sRetrofit;
     }
-    
     
 }

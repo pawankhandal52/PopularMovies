@@ -6,6 +6,7 @@
 package com.udacity.androidnanodegree.popularmovies.utills;
 
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 
@@ -14,7 +15,8 @@ import android.support.v7.widget.RecyclerView;
  */
 public abstract class PagingListener extends RecyclerView.OnScrollListener {
     private int visibleThreshold;
-    private final GridLayoutManager mGridLayoutManager;
+    private  GridLayoutManager mGridLayoutManager;
+    private  LinearLayoutManager mLinearLayoutManager;
     
     /**
      * Support only for Grid layout manager
@@ -25,21 +27,40 @@ public abstract class PagingListener extends RecyclerView.OnScrollListener {
         visibleThreshold = visibleThreshold * mGridLayoutManager.getSpanCount();
     }
     
+    protected PagingListener(LinearLayoutManager linearLayoutManager){
+        this.mLinearLayoutManager = linearLayoutManager;
+    }
+    
     @Override
     public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
         super.onScrolled(recyclerView, dx, dy);
-        int visibleItemCount  = mGridLayoutManager.getChildCount();
-        int totalItemCount = mGridLayoutManager.getItemCount();
-        int lastVisibleItemPosition = mGridLayoutManager.findLastVisibleItemPosition();
+        if (recyclerView.getLayoutManager() instanceof GridLayoutManager){
+            int visibleItemCount  = mGridLayoutManager.getChildCount();
+            int totalItemCount = mGridLayoutManager.getItemCount();
+            int lastVisibleItemPosition = mGridLayoutManager.findLastVisibleItemPosition();
     
-        
-        if (!isLoading() && !isLastPage()) {
-            if ((visibleThreshold + lastVisibleItemPosition+visibleItemCount) >= totalItemCount
-                    && lastVisibleItemPosition >= 0
-                    && totalItemCount <= getTotalPageCount()) {
-                loadMoreItems();
+    
+            if (!isLoading() && !isLastPage()) {
+                if ((visibleThreshold + lastVisibleItemPosition+visibleItemCount) >= totalItemCount
+                        && lastVisibleItemPosition >= 0
+                        && totalItemCount <= getTotalPageCount()) {
+                    loadMoreItems();
+                }
+            }
+        }else if(recyclerView.getLayoutManager() instanceof LinearLayoutManager){
+            int visibleItemCount = mLinearLayoutManager.getChildCount();
+            int totalItemCount = mLinearLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLinearLayoutManager.findLastVisibleItemPosition();
+    
+            if (!isLoading() && !isLastPage()) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= getTotalPageCount()) {
+                    loadMoreItems();
+                }
             }
         }
+        
     }
     
     protected abstract void loadMoreItems();
