@@ -15,10 +15,7 @@ To Run this app first you need to clone it and just add your api keys which can 
 5. Run this and you can see popular movies.
 
 ### Screenshot of app
-![home_page](https://user-images.githubusercontent.com/16113573/41774836-f500449a-763e-11e8-9369-d422c6e872e2.png)
-
-
-![movie_details](https://user-images.githubusercontent.com/16113573/41774837-f52c6430-763e-11e8-876a-7bb05fd03713.png)
-
-
-![swipe_to_refresh](https://user-images.githubusercontent.com/16113573/41774838-f555bcc2-763e-11e8-9b0e-73e71c65fcd9.png)
+![device-2018-08-04-112829](https://user-images.githubusercontent.com/16113573/43673102-4cb94a8a-97da-11e8-999f-74c0defb79da.png)
+![device-2018-08-04-112906](https://user-images.githubusercontent.com/16113573/43673103-4ce6409e-97da-11e8-9030-66a0723fac3d.png)
+![device-2018-08-04-112953](https://user-images.githubusercontent.com/16113573/43673104-4d117c8c-97da-11e8-8f65-1f882b67fabb.png)
+![device-2018-08-04-113038](https://user-images.githubusercontent.com/16113573/43673105-4d3ec002-97da-11e8-98fa-3147998d0bd0.png)
