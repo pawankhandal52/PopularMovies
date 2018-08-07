@@ -9,7 +9,10 @@ import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -64,6 +67,10 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
     //Database instance to get fav movies of user
     private Context mContext;
     
+    private  Bundle mBundleRecyclerViewState;
+    private Parcelable mListState = null;
+    private GridLayoutManager mGridLayoutManager;
+    
     public FavoriteMovieFragment() {
         // Required empty public constructor
     }
@@ -76,14 +83,14 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
         mUnbinder = ButterKnife.bind(this, view);
         mContext = getActivity();
         
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,
+         mGridLayoutManager = new GridLayoutManager(mContext,
                 getResources().getInteger(R.integer.grid_column_count));
         
         //set the adapter
         mFavoriteMoviesAdapter = new FavoriteMoviesAdapter(mContext, this);
         
         //init the recycler view
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mFavoriteMoviesAdapter);
         
@@ -110,6 +117,35 @@ public class FavoriteMovieFragment extends Fragment implements FavoriteMoviesAda
         return view;
     }
     
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        //This used to store the state of recycler view
+        mBundleRecyclerViewState = new Bundle();
+        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(getResources().getString(R.string.recycler_scroll_position_key), mListState);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //When orientation is changed then grid column count is also changed so get every time
+        int columns = getResources().getInteger(R.integer.grid_column_count);
+        if (mBundleRecyclerViewState != null) {
+            new Handler().postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    mListState = mBundleRecyclerViewState.getParcelable(getResources().getString(R.string.recycler_scroll_position_key));
+                    mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                    
+                }
+            }, 50);
+        }
+        mGridLayoutManager.setSpanCount(columns);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
+    }
     @Override
     public void onItemClick(FavoriteMoviesEntity favoriteMoviesEntity, View view) {
         Intent intent = new Intent(mContext, MovieDetailsActivity.class);

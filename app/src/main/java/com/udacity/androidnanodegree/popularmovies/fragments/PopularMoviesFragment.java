@@ -10,9 +10,11 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -83,10 +85,16 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
     private MoviesAdapter mMoviesAdapter;
     private NetworkReceiver mNetworkReceiver;
     private Context mContext;
+    private  Bundle mBundleRecyclerViewState;
+    private Parcelable mListState = null;
+    private GridLayoutManager mGridLayoutManager;
+    
     
     public PopularMoviesFragment() {
         // Required empty public constructor
     }
+   
+    
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -98,16 +106,15 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
         
         //Set the adapter and layout manager
         mMoviesAdapter = new MoviesAdapter(mContext, this);
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(mContext,
+         mGridLayoutManager = new GridLayoutManager(mContext,
                 getResources().getInteger(R.integer.grid_column_count));
         
         //init the recycler view
-        mRecyclerView.setLayoutManager(gridLayoutManager);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setAdapter(mMoviesAdapter);
-        
         //This is the scrollListener for paging /load more data
-        mRecyclerView.addOnScrollListener(new PagingListener(gridLayoutManager) {
+        mRecyclerView.addOnScrollListener(new PagingListener(mGridLayoutManager) {
             @Override
             public void loadMoreItems() {
                 isLoading = true;
@@ -135,6 +142,7 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
                 return isLoading;
             }
         });
+        
         
         
         /*
@@ -181,6 +189,35 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
         
         mContext.registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         return view;
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        //This used to store the state of recycler view
+        mBundleRecyclerViewState = new Bundle();
+        mListState = mRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(getResources().getString(R.string.recycler_scroll_position_key), mListState);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //When orientation is changed then grid column count is also changed so get every time
+        int columns = getResources().getInteger(R.integer.grid_column_count);
+        if (mBundleRecyclerViewState != null) {
+            new Handler().postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    mListState = mBundleRecyclerViewState.getParcelable(getResources().getString(R.string.recycler_scroll_position_key));
+                    mRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                    
+                }
+            }, 50);
+        }
+        mGridLayoutManager.setSpanCount(columns);
+        mRecyclerView.setLayoutManager(mGridLayoutManager);
     }
     
     @Override
@@ -277,7 +314,6 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
         moviesCall.enqueue(new Callback<Movies>() {
             @Override
             public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
-                mSwipeRefreshLayout.setRefreshing(false);
                 //First remove the loading footer
                 mMoviesAdapter.removeLoadingFooter();
                 isLoading = false;

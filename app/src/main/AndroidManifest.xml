@@ -30,12 +30,14 @@
             android:name=".activity.MovieDetailsActivity"
             android:label="@string/title_activity_movie_details"
             android:parentActivityName=".activity.HomeActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:configChanges="orientation|screenSize">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.udacity.androidnanodegree.popularmovies.activity.HomeActivity"/>
         </activity>
-        <activity android:name=".activity.HomeActivity"/>
+        <activity android:name=".activity.HomeActivity"
+                  android:configChanges="orientation|screenSize"/>
     </application>
 
 </manifest>

@@ -14,10 +14,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -87,6 +89,9 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
     private NetworkReceiver mNetworkReceiver;
     private Bundle mBundle;
     
+    private Bundle mRecyclerViewState;
+    private Parcelable mListState = null;
+    private LinearLayoutManager mLinearLayoutManager;
     public MovieReviewsFragment() {
         
         // Required empty public constructor
@@ -126,15 +131,16 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
         }
         
         //Set the adapter and Recycler view
+        
         mMoviesReviewAdapter = new MoviesReviewAdapter(getActivity(), this);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(mContext);
-        mReviewsRecyclerView.setLayoutManager(linearLayoutManager);
+        mLinearLayoutManager = new LinearLayoutManager(mContext);
+        mReviewsRecyclerView.setLayoutManager(mLinearLayoutManager);
         mReviewsRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mReviewsRecyclerView.setAdapter(mMoviesReviewAdapter);
         
         //Log.e(TAG, "onCreateView: " );
         //Add lisner fo on scroll listner
-        mReviewsRecyclerView.addOnScrollListener(new PagingListener(linearLayoutManager) {
+        mReviewsRecyclerView.addOnScrollListener(new PagingListener(mLinearLayoutManager) {
             @Override
             protected void loadMoreItems() {
                 isLoading = true;
@@ -195,6 +201,29 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
         
         mContext.registerReceiver(mNetworkReceiver, new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
         return view;
+    }
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        mRecyclerViewState  = new Bundle();
+        mListState = mReviewsRecyclerView.getLayoutManager().onSaveInstanceState();
+        mRecyclerViewState.putParcelable(getResources().getString(R.string.recycler_scroll_position_key),mListState);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mRecyclerViewState!=null){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mListState = mRecyclerViewState.getParcelable(getResources().getString(R.string.recycler_scroll_position_key));
+                    mReviewsRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                }
+            },50);
+        }
+        mReviewsRecyclerView.setLayoutManager(mLinearLayoutManager);
     }
     
     /**
@@ -267,9 +296,6 @@ public class MovieReviewsFragment extends Fragment implements MoviesReviewAdapte
                 //First remove the loading footer
                 mMoviesReviewAdapter.removeLoadingItem();
                 isLoading = false;
-                //Log.e(TAG, "onResponse: load more"+mCurrentPage );
-                //Log.e(TAG, "onResponse: load more"+response.raw().request().url() );
-                mSwipeRefreshLayout.setRefreshing(false);
                 if (response.isSuccessful()) {
                     List<Result> results = getResultFromMovieReviewResponse(response);
                     mTotalPages = getTotalPages(response);

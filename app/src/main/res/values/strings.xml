@@ -58,4 +58,6 @@
     <string name="no_fav_movies">No Favorite movie found</string>
     <string name="share_icon">share</string>
 
+    <string name="recycler_scroll_position_key">rv_scroll_position</string>
+
 </resources>
