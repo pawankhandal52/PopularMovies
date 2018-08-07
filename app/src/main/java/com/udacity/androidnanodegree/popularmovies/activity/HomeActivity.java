@@ -27,6 +27,7 @@ import butterknife.ButterKnife;
  * This is home activity which shows popular movies, Top Rated Movie and User favorites movie in Child fragment
  */
 public class HomeActivity extends AppCompatActivity {
+    private final String TAG = HomeActivity.class.getSimpleName();
     //Ui Views
     @BindView(R.id.home_tab_layout)
     TabLayout mTabLayout;
@@ -46,12 +47,14 @@ public class HomeActivity extends AppCompatActivity {
         
         //Call setValuesToViews function to show the data send by previous activity.
         //setValuesToViews(bundle);
-        mViewPager.setOffscreenPageLimit(3);
+        mViewPager.setOffscreenPageLimit(getResources().getInteger(R.integer.view_pager_off_screen_page_limit));
         
         if (!Utills.isConnectionAvailable(this)) {
-            mViewPager.setCurrentItem(3);
+            mViewPager.setCurrentItem(getResources().getInteger(R.integer.view_pager_off_screen_page_limit));
         }
     }
+    
+  
     
     //Setup view pager with tabs fragment
     private void setUpViewPager(ViewPager viewPager) {
@@ -71,4 +74,6 @@ public class HomeActivity extends AppCompatActivity {
         Objects.requireNonNull(mTabLayout.getTabAt(1)).setText(getString(R.string.top_rated));
         Objects.requireNonNull(mTabLayout.getTabAt(2)).setText(getString(R.string.favorite));
     }
+    
+    
 }

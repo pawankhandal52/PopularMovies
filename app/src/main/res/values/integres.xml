@@ -2,4 +2,5 @@
 <resources>
     <integer name="grid_column_count">2</integer>
     <integer name="duration_of_animation">300</integer>
+    <integer name="view_pager_off_screen_page_limit">3</integer>
 </resources>

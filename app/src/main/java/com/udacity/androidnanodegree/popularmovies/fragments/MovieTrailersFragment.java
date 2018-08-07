@@ -10,9 +10,12 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
@@ -73,6 +76,10 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
     private NetworkReceiver mNetworkReceiver;
     private MoviesTrailersAdapter mMoviesTrailersAdapter;
     
+    
+    private  Bundle mBundleRecyclerViewState;
+    private Parcelable mListState = null;
+    private LinearLayoutManager mLinearLayoutManager;
     public MovieTrailersFragment() {
         // Required empty public constructor
     }
@@ -108,8 +115,9 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
             Toast.makeText(mContext, getString(R.string.unknown_error), Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
+        mLinearLayoutManager = new LinearLayoutManager(mContext);
         mMoviesTrailersAdapter = new MoviesTrailersAdapter(mContext, this);
-        mTrailersRecyclerView.setLayoutManager(new LinearLayoutManager(mContext));
+        mTrailersRecyclerView.setLayoutManager(mLinearLayoutManager);
         mTrailersRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mTrailersRecyclerView.setAdapter(mMoviesTrailersAdapter);
         
@@ -134,6 +142,32 @@ public class MovieTrailersFragment extends Fragment implements MoviesTrailersAda
         return view;
     }
     
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        //This used to store the state of recycler view
+        mBundleRecyclerViewState = new Bundle();
+        mListState = mTrailersRecyclerView.getLayoutManager().onSaveInstanceState();
+        mBundleRecyclerViewState.putParcelable(getResources().getString(R.string.recycler_scroll_position_key), mListState);
+    }
+    
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mBundleRecyclerViewState != null) {
+            new Handler().postDelayed(new Runnable() {
+                
+                @Override
+                public void run() {
+                    mListState = mBundleRecyclerViewState.getParcelable(getResources().getString(R.string.recycler_scroll_position_key));
+                    mTrailersRecyclerView.getLayoutManager().onRestoreInstanceState(mListState);
+                    
+                }
+            }, 50);
+        }
+        mTrailersRecyclerView.setLayoutManager(mLinearLayoutManager);
+    }
     private void loadMoviesTrailers() {
         MovieTrailerViewModelFactory movieTrailerViewModelFactory = new MovieTrailerViewModelFactory(String.valueOf(mMovieId));
         MovieTrailersViewModel movieTrailersViewModel = ViewModelProviders.of(this, movieTrailerViewModelFactory).get(MovieTrailersViewModel.class);
