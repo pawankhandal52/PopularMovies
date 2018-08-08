@@ -97,17 +97,20 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
     
     
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_popular_movies, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mContext = getActivity();
+    
+        //int posterWidth = 500; // size in pixels (just a random size). You may use other values.
         
+       
         //Set the adapter and layout manager
         mMoviesAdapter = new MoviesAdapter(mContext, this);
          mGridLayoutManager = new GridLayoutManager(mContext,
-                getResources().getInteger(R.integer.grid_column_count));
+                 getResources().getInteger(R.integer.grid_column_count));
         
         //init the recycler view
         mRecyclerView.setLayoutManager(mGridLayoutManager);
@@ -370,5 +373,16 @@ public class PopularMoviesFragment extends Fragment implements MoviesAdapter.Mov
         }
         return 0;
     }
+    
+    /*private int calculateBestSpanCount(int posterWidth) {
+        Display display = null;
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            display = Objects.requireNonNull(getActivity()).getWindowManager().getDefaultDisplay();
+            Objects.requireNonNull(display).getMetrics(outMetrics);
+        }
+        float screenWidth = outMetrics.widthPixels;
+        return Math.round(screenWidth / posterWidth);
+    }*/
 }
 
