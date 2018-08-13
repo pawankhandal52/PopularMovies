@@ -5,15 +5,16 @@
  */
 package com.udacity.androidnanodegree.popularmovies.models.movies;
 
+import android.databinding.ObservableList;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
+import com.udacity.androidnanodegree.popularmovies.models.base.MoviesBaseDataModel;
 
 /**
  * This  class is used to parse the Api JSON data.
  */
-public class Movies {
+public class Movies implements MoviesBaseDataModel{
     
     @SerializedName("page")
     @Expose
@@ -26,7 +27,7 @@ public class Movies {
     private Integer totalPages;
     @SerializedName("results")
     @Expose
-    private List<Result> results = null;
+    private ObservableList<Result> results = null;
     
     public Integer getPage() {
         return page;
@@ -52,11 +53,15 @@ public class Movies {
         this.totalPages = totalPages;
     }
     
-    public List<Result> getResults() {
+//    public List<Result> getResults() {
+//        return results;
+//    }
+    
+    public ObservableList<Result> getResults() {
         return results;
     }
     
-    public void setResults(List<Result> results) {
+    public void setResults(ObservableList<Result> results) {
         this.results = results;
     }
     

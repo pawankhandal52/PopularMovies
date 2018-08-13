@@ -61,7 +61,6 @@ public class MovieRepository {
             public void onResponse(@NonNull Call<Movies> call, @NonNull Response<Movies> response) {
                 Log.d(TAG, "onResponse: " + response.body());
                 moviesResponse.setValue(response);
-                
             }
             
             @Override

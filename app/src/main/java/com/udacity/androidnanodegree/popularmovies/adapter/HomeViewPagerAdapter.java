@@ -7,7 +7,8 @@ package com.udacity.androidnanodegree.popularmovies.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+
+import com.udacity.androidnanodegree.popularmovies.fragments.MovieBaseFragmentPagerAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * This viewpager to set the tabs with its content on home screen
  */
-public class HomeViewPagerAdapter extends FragmentPagerAdapter {
+public class HomeViewPagerAdapter extends MovieBaseFragmentPagerAdapter {
     
     //List for fragments
     private final List<Fragment> mFragmentsList = new ArrayList<>();

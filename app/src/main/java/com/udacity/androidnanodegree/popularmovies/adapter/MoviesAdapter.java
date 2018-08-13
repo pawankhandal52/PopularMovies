@@ -6,6 +6,8 @@
 package com.udacity.androidnanodegree.popularmovies.adapter;
 
 import android.content.Context;
+import android.databinding.ObservableArrayList;
+import android.databinding.ObservableList;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -20,7 +22,6 @@ import com.udacity.androidnanodegree.popularmovies.R;
 import com.udacity.androidnanodegree.popularmovies.constants.AppConstants;
 import com.udacity.androidnanodegree.popularmovies.models.movies.Result;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -34,7 +35,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private static final int VIEW_ITEM = 0;
     private static final int VIEW_PROGRESS_ITEM = 1;
     private final Context mContext;
-    private final List<Result> mResults;
+//    private final List<Result> mResults;
+    private ObservableList<Result> mResults;
     private final Animation mAnimation;
     final private MovieItemClickListener mMovieItemClickListener;
     // --Commented out by Inspection (8/2/18, 5:10 PM):private final String TAG = MoviesAdapter.class.getSimpleName();
@@ -42,7 +44,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     
     public MoviesAdapter(Context context, MovieItemClickListener movieItemClickListener) {
         this.mContext = context;
-        mResults = new ArrayList<>();
+        mResults = new ObservableArrayList<>();
         this.mMovieItemClickListener = movieItemClickListener;
         mAnimation = AnimationUtils.loadAnimation(mContext, R.anim.blinking_animation);
     }
@@ -109,6 +111,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         for (Result result : mResultList) {
             add(result);
         }
+    }
+    
+    public void updateList(ObservableList<Result> list) {
+        mResults = list;
     }
     
     /**

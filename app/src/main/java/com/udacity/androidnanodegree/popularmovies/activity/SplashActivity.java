@@ -49,7 +49,8 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+//                Intent intent = new Intent(SplashActivity.this, HomeActivity.class);
+                Intent intent = new Intent(SplashActivity.this, PopularMoviesBindingActivity.class);
                 //This below line is used to remove splash activity from back stack start new Stack.
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
