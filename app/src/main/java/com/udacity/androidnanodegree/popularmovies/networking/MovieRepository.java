@@ -5,9 +5,9 @@
  */
 package com.udacity.androidnanodegree.popularmovies.networking;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.udacity.androidnanodegree.popularmovies.BuildConfig;
@@ -67,6 +67,7 @@ public class MovieRepository {
             @Override
             public void onFailure(@NonNull Call<Movies> call, @NonNull Throwable t) {
                 Log.e(TAG, "onFailure: ", t.getCause());
+
             }
         });
         return moviesResponse;

@@ -5,8 +5,8 @@
  */
 package com.udacity.androidnanodegree.popularmovies.ViewModels;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.ViewModel;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.ViewModel;
 
 import com.udacity.androidnanodegree.popularmovies.models.reviews.MovieReviews;
 import com.udacity.androidnanodegree.popularmovies.networking.MovieRepository;

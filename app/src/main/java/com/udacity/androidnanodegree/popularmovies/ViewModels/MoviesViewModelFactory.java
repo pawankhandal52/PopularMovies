@@ -5,9 +5,9 @@
  */
 package com.udacity.androidnanodegree.popularmovies.ViewModels;
 
-import android.arch.lifecycle.ViewModel;
-import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.annotation.NonNull;
 
 /**
  * This the Factory class which is used to pass the data from Activity to Registry Via View Model
